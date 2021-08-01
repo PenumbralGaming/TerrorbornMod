@@ -4,6 +4,7 @@
 //using Terraria;
 //using Terraria.ID;
 //using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 //namespace TerrorbornMod.Items.Ammo
 //{
@@ -69,7 +70,7 @@
 //        }
 //        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 //        {
-//            Main.PlaySound(SoundID.Item21, projectile.Center);
+//            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item21, projectile.Center);
 //        }
 //        bool Start = true;
 //        int RainWait = 10;
@@ -99,7 +100,7 @@
 //                    Main.dust[Num54].velocity = projectile.velocity.RotatedByRandom(MathHelper.ToRadians(30)) * Main.rand.NextFloat(0.9f, 1.1f);
 //                }
 //                Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
-//                Main.PlaySound(0, projectile.position);
+//                Terraria.Audio.SoundEngine.PlaySound(0, projectile.position);
 //            }
 //        }
 //    }
@@ -125,7 +126,7 @@
 //        }
 //        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
 //        {
-//            Main.PlaySound(SoundID.Item21, projectile.Center);
+//            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item21, projectile.Center);
 //        }
 //        public override void AI()
 //        {

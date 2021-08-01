@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Ammo
 {
@@ -89,7 +90,7 @@ namespace TerrorbornMod.Items.Ammo
             if (timeLeft > 0)
             {
                 Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
-                Main.PlaySound(0, projectile.position);
+                Terraria.Audio.SoundEngine.PlaySound(0, projectile.position);
                 for (int i = 0; i < Main.rand.Next(2, 4); i++)
                 {
                     int Num54 = Dust.NewDust(projectile.position, projectile.width, projectile.height, 33, 0, 0, Scale: 1f, newColor: Color.Blue);

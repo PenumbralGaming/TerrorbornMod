@@ -4,6 +4,7 @@ using Terraria.ID;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.NPCs
 {

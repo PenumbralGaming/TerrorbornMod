@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Projectiles
 {
@@ -78,7 +79,7 @@ namespace TerrorbornMod.Projectiles
         public override void Kill(int timeLeft)
         {
             DustExplosion(projectile.Center, 0, 12, 7, 74, 2f, true);
-            Main.PlaySound(SoundID.Item14, projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, projectile.Center);
         }
 
         public void DustExplosion(Vector2 position, int RectWidth, int Streams, float DustSpeed, int DustType, float DustScale = 1f, bool NoGravity = false) //Thank you once again Seraph

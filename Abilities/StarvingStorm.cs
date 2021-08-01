@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using TerrorbornMod;
 using Terraria.ID;
 
@@ -53,7 +54,7 @@ namespace TerrorbornMod.Abilities
         public override void OnUse(Player player)
         {
             Projectile.NewProjectile(Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<StormVortex>(), 0, 0, player.whoAmI);
-            Main.PlaySound(SoundID.NPCDeath52, player.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52, player.Center);
         }
     }
 

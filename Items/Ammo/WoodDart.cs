@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Ammo
 {
@@ -69,7 +70,7 @@ namespace TerrorbornMod.Items.Ammo
                 Item.NewItem((int)projectile.position.X, (int)projectile.position.Y, projectile.width, projectile.height, mod.ItemType("WoodDart"));
             }
             Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
-            Main.PlaySound(0, projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(0, projectile.position);
         }
     }
 }

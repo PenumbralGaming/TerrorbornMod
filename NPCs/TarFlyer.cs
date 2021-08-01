@@ -1,19 +1,10 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.Events;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Terraria.Graphics.Effects;
-using Terraria.Graphics.Shaders;
-using Terraria.Localization;
-using Terraria.World.Generation;
-using Terraria.UI;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.NPCs
 {
@@ -29,6 +20,7 @@ namespace TerrorbornMod.NPCs
         {
             npc.noGravity = true;
             npc.noTileCollide = true;
+            npc.aiStyle = -1;
             npc.width = 62;
             npc.height = 36;
             npc.damage = 45;
@@ -37,7 +29,7 @@ namespace TerrorbornMod.NPCs
             npc.HitSound = SoundID.NPCHit31;
             npc.DeathSound = SoundID.NPCDeath39;
             npc.value = 250;
-            npc.knockBackResist = 0f;
+            npc.knockBackResist = 0.1f;
             npc.lavaImmune = true;
         }
 
@@ -49,7 +41,7 @@ namespace TerrorbornMod.NPCs
         public override void PostDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             SpriteEffects effects = new SpriteEffects();
-            if (npc.direction == 1)
+            if (npc.spriteDirection == 1)
             {
                 effects = SpriteEffects.FlipHorizontally;
             }
@@ -62,7 +54,6 @@ namespace TerrorbornMod.NPCs
             }
         }
         int frame = 0;
-        float TrueVelocityX = 0;
         public override void FindFrame(int frameHeight)
         {
             npc.frameCounter--;
@@ -91,18 +82,22 @@ namespace TerrorbornMod.NPCs
         }
         public override void AI()
         {
-            npc.TargetClosest();
+            npc.TargetClosest(true);
+            if (Main.player[npc.target].Center.X > npc.Center.X)
+            {
+                npc.spriteDirection = 1;
+            }
+            else
+            {
+                npc.spriteDirection = -1;
+            }
             if (Main.player[npc.target].dead)
             {
                 float speed = -0.2f;
-                Vector2 move = Main.player[npc.target].Center - npc.Center;
-                float magnitude = (float)Math.Sqrt(move.X * move.X + move.Y * move.Y);
-                move *= speed / magnitude;
-                npc.velocity.Y += move.Y;
-                TrueVelocityX += move.X;
+                Vector2 velocity = npc.DirectionTo(Main.player[npc.target].Center) * speed;
+                npc.velocity += velocity;
 
-                npc.velocity.Y *= 0.99f;
-                TrueVelocityX *= 0.99f;
+                npc.velocity *= 0.99f;
                 if (npc.Distance(Main.player[npc.target].Center) > 4500)
                 {
                     npc.active = false;
@@ -121,128 +116,13 @@ namespace TerrorbornMod.NPCs
                     Main.dust[dust].velocity = npc.velocity;
                     Main.dust[dust].noGravity = true;
                 }
-                Vector2 move = Main.player[npc.target].Center - npc.Center;
-                float magnitude = (float)Math.Sqrt(move.X * move.X + move.Y * move.Y);
-                move *= speed / magnitude;
-                npc.velocity.Y += move.Y;
-                TrueVelocityX += move.X;
+                Vector2 velocity = npc.DirectionTo(Main.player[npc.target].Center) * speed;
+                npc.velocity += velocity;
+                npc.velocity += velocity;
 
-                npc.velocity.Y *= 0.99f;
-                TrueVelocityX *= 0.99f;
+                npc.velocity *= 0.99f;
             }
-
-            //Antlion swarmer AI - used to have an edited version
-            //if (npc.collideX)
-            //{
-            //    TrueVelocityX = npc.oldVelocity.X * -0.5f;
-            //    if (npc.direction == -1 && TrueVelocityX > 0f && TrueVelocityX < 2f)
-            //    {
-            //        TrueVelocityX = 2f;
-            //    }
-            //    if (npc.direction == 1 && TrueVelocityX < 0f && TrueVelocityX > -2f)
-            //    {
-            //        TrueVelocityX = -2f;
-            //    }
-            //}
-            //if (npc.collideY)
-            //{
-            //    npc.velocity.Y = npc.oldVelocity.Y * -0.5f;
-            //    if (npc.velocity.Y > 0f && npc.velocity.Y < 1f)
-            //    {
-            //        npc.velocity.Y = 1f;
-            //    }
-            //    if (npc.velocity.Y < 0f && npc.velocity.Y > -1f)
-            //    {
-            //        npc.velocity.Y = -1f;
-            //    }
-            //}
-            //float num707 = 0.06f; //Flying speed (?)
-            //float num708 = 8f;
-            //float num709 = Math.Abs(npc.position.X + (float)(npc.width / 2) - (Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2)));
-            //float num710 = Main.player[npc.target].position.Y - (float)(npc.height / 2);
-            //if (num709 > 30f)
-            //{
-            //    if (npc.direction == -1 && TrueVelocityX > -num708)
-            //    {
-            //        TrueVelocityX = TrueVelocityX - num707;
-            //        if (TrueVelocityX > num708)
-            //        {
-            //            TrueVelocityX = TrueVelocityX - num707;
-            //        }
-            //        else
-            //        {
-            //            if (TrueVelocityX > 0f)
-            //            {
-            //                TrueVelocityX = TrueVelocityX - num707 / 2f;
-            //            }
-            //        }
-            //        if (TrueVelocityX < -num708)
-            //        {
-            //            TrueVelocityX = -num708;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (npc.direction == 1 && TrueVelocityX < num708)
-            //        {
-            //            TrueVelocityX = TrueVelocityX + num707;
-            //            if (TrueVelocityX < -num708)
-            //            {
-            //                TrueVelocityX = TrueVelocityX + num707;
-            //            }
-            //            else
-            //            {
-            //                if (TrueVelocityX < 0f)
-            //                {
-            //                    TrueVelocityX = TrueVelocityX + num707 / 2f;
-            //                }
-            //            }
-            //            if (TrueVelocityX > num708)
-            //            {
-            //                TrueVelocityX = num708;
-            //            }
-            //        }
-            //    }
-            //}
-            //if (num709 > 100f)
-            //{
-            //    num710 -= 50f;
-            //}
-            //if (npc.position.Y < num710)
-            //{
-            //    npc.velocity.Y = npc.velocity.Y + 0.01f;
-            //    if (npc.velocity.Y < 0f)
-            //    {
-            //        npc.velocity.Y = npc.velocity.Y + 0.01f;
-            //    }
-            //}
-            //else
-            //{
-            //    npc.velocity.Y = npc.velocity.Y - 0.01f;
-            //    if (npc.velocity.Y > 0f)
-            //    {
-            //        npc.velocity.Y = npc.velocity.Y - 0.01f;
-            //    }
-            //}
-            //if (npc.velocity.Y < -1f)
-            //{
-            //    npc.velocity.Y = -1f;
-            //}
-            //if (npc.velocity.Y > 1f)
-            //{
-            //    npc.velocity.Y = 1f;
-            //    return;
-            //}
-            //if (Main.player[npc.target].Center.X > npc.Center.X)
-            //{
-            //    npc.direction = 1;
-            //}
-            //else
-            //{
-            //    npc.direction = -1;
-            //}
             npc.rotation = MathHelper.ToRadians(npc.velocity.X * 1.5f);
-            npc.velocity.X = TrueVelocityX;
         }
     }
 }

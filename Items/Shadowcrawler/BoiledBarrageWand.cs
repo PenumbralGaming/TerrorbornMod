@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Shadowcrawler
 {
@@ -125,10 +126,6 @@ namespace TerrorbornMod.Items.Shadowcrawler
             if (Targeted)
             {
                 //HOME IN
-                float speed = .35f;
-                Vector2 move = targetNPC.Center - projectile.Center;
-                float magnitude = (float)Math.Sqrt(move.X * move.X + move.Y * move.Y);
-                move *= speed / magnitude;
                 projectile.velocity = projectile.velocity.ToRotation().AngleTowards(projectile.DirectionTo(targetNPC.Center).ToRotation(), MathHelper.ToRadians(1f * (projectile.velocity.Length() / 20))).ToRotationVector2() * projectile.velocity.Length();
             }
 
@@ -147,7 +144,7 @@ namespace TerrorbornMod.Items.Shadowcrawler
         public override void Kill(int timeLeft)
         {
             DustExplosion(projectile.Center, 0, 12, 7, 74, 2f, true);
-            Main.PlaySound(SoundID.Item14, projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, projectile.Center);
         }
 
         public void DustExplosion(Vector2 position, int RectWidth, int Streams, float DustSpeed, int DustType, float DustScale = 1f, bool NoGravity = false) //Thank you once again Seraph

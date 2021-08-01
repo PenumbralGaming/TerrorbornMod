@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace TerrorbornMod.Items.Weapons.Summons.Sentry
@@ -212,7 +213,7 @@ namespace TerrorbornMod.Items.Weapons.Summons.Sentry
                         PinWait = 100;
                         PinRoundsLeft = Main.rand.Next(1, 5);
                     }
-                    Main.PlaySound(SoundID.Item42, projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item42, projectile.Center);
                     Vector2 Rotation = projectile.DirectionTo(target.Center);
                     float Speed = 20;
                     Vector2 Velocity = Rotation * Speed;

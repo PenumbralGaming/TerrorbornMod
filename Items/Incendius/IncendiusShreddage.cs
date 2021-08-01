@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Incendius
 {
@@ -32,8 +33,8 @@ namespace TerrorbornMod.Items.Incendius
         public override void SetDefaults()
         {
             item.value = Item.sellPrice(0, 3, 0, 0);
-            item.width = 28;
-            item.height = 30;
+            item.width = 48;
+            item.height = 56;
             item.magic = true;
             item.damage = 16;
             item.useTime = 16;
@@ -46,6 +47,7 @@ namespace TerrorbornMod.Items.Incendius
             item.useStyle = 5;
             item.knockBack = 0.1f;
             item.autoReuse = true;
+            item.noMelee = true;
         }
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {

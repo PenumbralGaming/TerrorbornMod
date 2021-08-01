@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Terraria.ID;
 
 namespace TerrorbornMod.Tiles
@@ -24,7 +25,9 @@ namespace TerrorbornMod.Tiles
             minPick = 56;
             mineResist = 2;
             drop = mod.ItemType("AzuriteOre");
-            AddMapEntry(new Color(106, 142, 193));
+            ModTranslation name = CreateMapEntryName();
+            name.SetDefault("Azurite");
+            AddMapEntry(new Color(106, 142, 193), name);
         }
 
         public override void NumDust(int i, int j, bool fail, ref int num)

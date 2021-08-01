@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Terraria.ID;
 
 namespace TerrorbornMod.Abilities
@@ -52,7 +53,7 @@ namespace TerrorbornMod.Abilities
         {
             TerrorbornPlayer modPlayer = TerrorbornPlayer.modPlayer(player);
             modPlayer.VoidBlinkTime = 60 * 3 + 30;
-            Main.PlaySound(SoundID.Item72, player.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item72, player.Center);
             DustExplosion(player.Center, 0, 15, 15, 27, 1.5f, true);
         }
         public void DustExplosion(Vector2 position, int RectWidth, int Streams, float DustSpeed, int DustType, float DustScale = 1f, bool NoGravity = false) //Thank you once again Seraph

@@ -6,7 +6,8 @@
 //using Terraria.ID;
 //using Terraria.Localization;
 //using Terraria.ModLoader;
-//using Terraria.World.Generation;
+using static Terraria.ModLoader.ModContent;
+//using Terraria.WorldBuilding;
 //using Microsoft.Xna.Framework;
 //using Terraria.GameContent.Generation;
 //using Terraria.ModLoader.IO;

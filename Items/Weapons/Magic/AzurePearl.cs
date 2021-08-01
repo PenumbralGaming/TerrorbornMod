@@ -1,4 +1,5 @@
 ﻿using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Terraria.ID;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -60,7 +61,7 @@ namespace TerrorbornMod.Items.Weapons.Magic
         }
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item110, projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item110, projectile.Center);
             for (int i = 0; i < Main.rand.Next(3, 5); i++)
             {
                 float speed = 35f;

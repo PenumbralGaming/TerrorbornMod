@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Incendius
 {
@@ -26,8 +27,9 @@ namespace TerrorbornMod.Items.Incendius
         }
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Has a 20% chance to let out a cloud of flames" +
-                "\n20% chance to not consume ammo");
+            Tooltip.SetDefault("Uses Gel as ammo, creating flames" +
+                "\nHas a chance to create a lingering flame cloud" +
+                "\n95% chance to not consume ammo");
         }
         public override void SetDefaults()
         {
@@ -35,23 +37,24 @@ namespace TerrorbornMod.Items.Incendius
             item.ranged = true;
             item.noMelee = true;
             item.scale = 0.8f;
-            item.width = 56;
-            item.height = 40;
-            item.useTime = 10;
-            item.useAnimation = 10;
+            item.width = 58;
+            item.height = 32;
+            item.useTime = 4;
+            item.useAnimation = 12;
+            item.reuseDelay = 15;
             item.useStyle = 5;
             item.knockBack = 5;
             item.value = Item.sellPrice(0, 3, 0, 0);
             item.rare = 4;
-            item.UseSound = SoundID.Item41;
-            item.shoot = 10;
+            item.UseSound = SoundID.Item61;
+            item.shoot = ProjectileID.Flames;
             item.autoReuse = true;
             item.shootSpeed = 10f;
-            item.useAmmo = AmmoID.Bullet;
+            item.useAmmo = AmmoID.Gel;
         }
         public override bool ConsumeAmmo(Player player)
         {
-            return Main.rand.NextFloat() >= .20f;
+            return Main.rand.NextFloat() >= .95f;
         }
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
@@ -68,10 +71,12 @@ namespace TerrorbornMod.Items.Incendius
             {
                 position += Vector2.Normalize(new Vector2(speedX, speedY)).RotatedBy(-60) * 15f;
             }
-            Vector2 perturbedSpeed = new Vector2(speedX, speedY).RotatedByRandom(MathHelper.ToRadians(5));
-            speedX = perturbedSpeed.X;
-            speedY = perturbedSpeed.Y;
-            return true;
+
+            int proj = Projectile.NewProjectile(position, new Vector2(speedX, speedY), type, damage, knockBack, player.whoAmI);
+            Main.projectile[proj].usesLocalNPCImmunity = true;
+            Main.projectile[proj].localNPCHitCooldown = -1;
+            Main.projectile[proj].penetrate = -1;
+            return false;
         }
         public override Vector2? HoldoutOffset()
         {

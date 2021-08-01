@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
@@ -38,7 +39,7 @@ namespace TerrorbornMod.Items
         public override bool UseItem(Player player)
         {
             Vector2 position = player.Center + new Vector2(0, -350);
-            Main.PlaySound(SoundID.Item117, position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item117, position);
             Projectile.NewProjectile(position, Vector2.Zero, ModContent.ProjectileType<LunarPortal>(), 0, 0);
             return true;
         }

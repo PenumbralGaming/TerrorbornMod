@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using System;
 
 namespace TerrorbornMod.Items.Shadowcrawler
@@ -20,7 +21,7 @@ namespace TerrorbornMod.Items.Shadowcrawler
 
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Hitting enemies causes Nightmare flames to erupt from them towards your cursor.");
+            Tooltip.SetDefault("Hitting enemies causes Nightmare flames to erupt from them towards your cursor");
         }
 
         public override void SetDefaults()

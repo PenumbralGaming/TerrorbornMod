@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Terraria.ID;
 using Microsoft.Xna.Framework;
 
@@ -51,7 +52,7 @@ namespace TerrorbornMod.Abilities
             if (noiseCooldown <= 0)
             {
                 noiseCooldown = 20;
-                Main.PlaySound(SoundID.Item72, player.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item72, player.Center);
                 player.HealEffect(5);
                 player.statLife += 5;
             }

@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Weapons.Melee
 {
@@ -100,7 +101,7 @@ namespace TerrorbornMod.Items.Weapons.Melee
         }
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item27, projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27, projectile.position);
         }
         public override void AI()
         {

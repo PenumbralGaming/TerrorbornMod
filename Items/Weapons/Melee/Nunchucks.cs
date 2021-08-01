@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Weapons.Melee
 {
@@ -12,11 +13,12 @@ namespace TerrorbornMod.Items.Weapons.Melee
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("While being used it will deflect projectiles with a 2 second cooldown.");
+            Tooltip.SetDefault("Can deflect projectiles with a 1.5 second cooldown");
         }
+
         public override void SetDefaults()
         {
-            item.damage = 25;
+            item.damage = 8;
             item.width = 52;
             item.height = 94;
             item.melee = true;
@@ -26,30 +28,26 @@ namespace TerrorbornMod.Items.Weapons.Melee
             item.useStyle = 100;
             item.knockBack = 3f;
             item.UseSound = SoundID.Item1;
-            item.value = Item.sellPrice(0, 1, 50, 0);
+            item.value = Item.sellPrice(0, 0, 50, 0);
             item.rare = 3;
             item.shoot = mod.ProjectileType("NunchucksProjectile");
             item.noUseGraphic = true;
             item.noMelee = true;
         }
-
-        public override void AddRecipes()
-        {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.DynastyWood, 10);
-            recipe.AddIngredient(ItemID.WhiteString, 3);
-            recipe.AddRecipeGroup(RecipeGroupID.Wood, 15);
-            recipe.AddTile(TileID.Anvils);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
-        }
     }
+
     public class NunchucksProjectile : ModProjectile
     {
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            hitDirection = projectile.spriteDirection * -1;
+        }
+
         public override void SetStaticDefaults()
         {
             Main.projFrames[projectile.type] = 8;
         }
+
         public override void SetDefaults()
         {
             projectile.idStaticNPCHitCooldown = 6;
@@ -62,6 +60,7 @@ namespace TerrorbornMod.Items.Weapons.Melee
             projectile.ignoreWater = true;
             projectile.melee = true;
         }
+
         void FindFrame(int FrameHeight)
         {
             projectile.frameCounter--;
@@ -75,6 +74,7 @@ namespace TerrorbornMod.Items.Weapons.Melee
                 projectile.frame = 0;
             }
         }
+
         bool Start = true;
         int DeflectCounter = 120;
         public override void AI()
@@ -108,7 +108,7 @@ namespace TerrorbornMod.Items.Weapons.Melee
             projectile.soundDelay--;
             if (projectile.soundDelay <= 0)
             {
-                Main.PlaySound(SoundID.Item1, (int)projectile.Center.X, (int)projectile.Center.Y);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1, (int)projectile.Center.X, (int)projectile.Center.Y);
                 projectile.soundDelay = 15;
             }
             if (Main.myPlayer == projectile.owner)

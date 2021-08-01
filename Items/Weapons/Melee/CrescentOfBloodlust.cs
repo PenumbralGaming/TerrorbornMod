@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Weapons.Melee
 {
@@ -105,7 +106,7 @@ namespace TerrorbornMod.Items.Weapons.Melee
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Main.PlaySound(0, projectile.position); //Sound for when it hits a block
+            Terraria.Audio.SoundEngine.PlaySound(0, projectile.position); //Sound for when it hits a block
 
             // B O U N C E
             if (projectile.velocity.X != oldVelocity.X)

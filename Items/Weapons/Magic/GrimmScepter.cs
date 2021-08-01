@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Weapons.Magic
 {
@@ -33,8 +34,8 @@ namespace TerrorbornMod.Items.Weapons.Magic
         {
             item.damage = 8;
             item.noMelee = true;
-            item.width = 50;
-            item.height = 30;
+            item.width = 52;
+            item.height = 52;
             item.useTime = 16;
             item.shoot = 10;
             item.useAnimation = 16;
@@ -51,8 +52,7 @@ namespace TerrorbornMod.Items.Weapons.Magic
         }
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            Vector2 mouse = new Vector2(Main.mouseX, Main.mouseY) + Main.screenPosition;
-            position = player.Center + (player.DirectionTo(mouse) * 40);
+            position = player.Center + (player.DirectionTo(Main.MouseWorld) * 40);
             Projectile.NewProjectile(position, new Vector2(speedX, speedY), type, damage, knockBack, item.owner, 1);
             Projectile.NewProjectile(position, new Vector2(speedX, speedY), type, damage, knockBack, item.owner, -1);
             return false;

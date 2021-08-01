@@ -5,6 +5,7 @@ using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Terraria.GameContent.Events;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +13,7 @@ using System.Linq;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.Localization;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 using Terraria.UI;
 
 namespace TerrorbornMod.NPCs

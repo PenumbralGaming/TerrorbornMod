@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Incendius
 {
@@ -34,8 +35,8 @@ namespace TerrorbornMod.Items.Incendius
         public override void SetDefaults()
         {
             item.damage = 35;
-            item.width = 48;
-            item.height = 48;
+            item.width = 54;
+            item.height = 54;
             item.useTime = 8;
             item.useAnimation = 8;
             item.rare = 4;
@@ -98,8 +99,8 @@ namespace TerrorbornMod.Items.Incendius
         public override void SetDefaults()
         {
             projectile.melee = true;
-            projectile.width = 48;
-            projectile.height = 48;
+            projectile.width = 54;
+            projectile.height = 54;
             projectile.friendly = true;
             projectile.hostile = false;
             projectile.tileCollide = true;
@@ -110,7 +111,7 @@ namespace TerrorbornMod.Items.Incendius
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Main.PlaySound(0, projectile.position); //Sound for when it hits a block
+            Terraria.Audio.SoundEngine.PlaySound(0, projectile.position); //Sound for when it hits a block
 
             // B O U N C E
             if (projectile.velocity.X != oldVelocity.X)

@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using System;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -92,7 +93,7 @@ namespace TerrorbornMod.Items.Dunestock
                 projectile.position.Y = projectile.position.Y + projectile.velocity.Y;
                 projectile.velocity.Y = -oldVelocity.Y;
             }
-            //Main.PlaySound(SoundID.Run, projectile.Center);
+            //Terraria.Audio.SoundEngine.PlaySound(SoundID.Run, projectile.Center);
             CollideCounter += 1;
             if (CollideCounter >= 5)
             {
@@ -105,7 +106,7 @@ namespace TerrorbornMod.Items.Dunestock
             for (int i = 0; i < Main.rand.Next(2, 4); i++)
             {
                 Vector2 mousePosition = new Vector2(Main.mouseX, Main.mouseY) + Main.screenPosition;
-                Main.PlaySound(SoundID.Item42, projectile.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item42, projectile.Center);
                 float ProjSpeed = 25f;
                 Vector2 vector8 = new Vector2(projectile.position.X + (projectile.width / 2), projectile.position.Y + (projectile.height / 2));
                 int damage = projectile.damage / 6; // /2 undoes the expert increase

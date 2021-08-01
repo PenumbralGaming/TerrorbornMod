@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -58,7 +59,7 @@ namespace TerrorbornMod.Items.Weapons.Melee
             recipe.AddRecipe();
         }
     }
-    class AzuriteSlash: ModProjectile
+    class AzuriteSlash : ModProjectile
     {
         public override void SetStaticDefaults()
         {

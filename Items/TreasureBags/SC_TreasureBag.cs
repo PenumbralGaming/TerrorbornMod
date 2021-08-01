@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.TreasureBags
 {
@@ -40,7 +41,7 @@ namespace TerrorbornMod.Items.TreasureBags
             }
             else if (choice == 1)
             {
-                player.QuickSpawnItem(ModContent.ItemType<Items.Shadowcrawler.ContaminatedMarinePistol>());
+                player.QuickSpawnItem(ModContent.ItemType<Items.Shadowcrawler.Nightbrood>());
             }
             else if (choice == 2)
             {

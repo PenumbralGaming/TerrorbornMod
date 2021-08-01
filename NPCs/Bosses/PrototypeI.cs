@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -69,6 +70,7 @@ namespace TerrorbornMod.NPCs.Bosses
 
         public override void SetDefaults()
         {
+            npc.aiStyle = -1;
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.width = 240;
@@ -192,7 +194,6 @@ namespace TerrorbornMod.NPCs.Bosses
             }
         }
 
-        Vector2 velocity = Vector2.Zero;
         bool autoDirection = true;
         int dirOverride = 1;
         int AIPhase = 0;
@@ -221,8 +222,8 @@ namespace TerrorbornMod.NPCs.Bosses
         {
             if (phase == 0)
             {
-                //Main.PlaySound(SoundID.Item71, target.Center);
-                Main.PlaySound(SoundID.Roar, (int)target.Center.X, (int)target.Center.Y, 0, pitchOffset: 0.5f);
+                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item71, target.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, (int)target.Center.X, (int)target.Center.Y, 0, pitchOffset: 0.5f);
                 phase0MaxSpeed = 0;
                 phaseCounter = 300;
                 attackCounter1 = 90;
@@ -377,7 +378,7 @@ namespace TerrorbornMod.NPCs.Bosses
                 }
 
                 DustExplosion(npc.Center, 0, 360, 30, 74, 1.5f, true);
-                Main.PlaySound(SoundID.NPCDeath10, npc.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath10, npc.Center);
             }
             if (phase == 3)
             {
@@ -420,11 +421,11 @@ namespace TerrorbornMod.NPCs.Bosses
                 }
                 dirOverride = attackDirection;
                 DustExplosion(npc.Center, 0, 360, 30, 74, 1.5f, true);
-                Main.PlaySound(SoundID.NPCDeath10, npc.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath10, npc.Center);
             }
             if (phase == 4)
             {
-                //Main.PlaySound(SoundID.Roar, (int)target.Center.X, (int)target.Center.Y, 0, pitchOffset: -0.5f);
+                //Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, (int)target.Center.X, (int)target.Center.Y, 0, pitchOffset: -0.5f);
                 teleportToPortal();
                 attackCounter1 = 0;
                 phaseCounter = 4;
@@ -550,7 +551,7 @@ namespace TerrorbornMod.NPCs.Bosses
                             {
                                 setUpNextAIPhasePortals(nextAIPhase);
                             }
-                            Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
+                            Terraria.Audio.SoundEngine.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
                             Vector2 telegraphVelocity = npc.DirectionTo(target.Center + (npc.Distance(target.Center) / chargeSpeed * target.velocity)) * 5;
                             Projectile.NewProjectile(npc.Center, telegraphVelocity, ModContent.ProjectileType<ShockWaveTelegraph>(), 0, 0);
                         }
@@ -582,8 +583,8 @@ namespace TerrorbornMod.NPCs.Bosses
                             spinSpeed = 5;
                             if (npc.Distance(targetPosition) <= 25)
                             {
-                                velocity.X = -25 * attackDirection;
-                                velocity.Y = 0;
+                                npc.velocity.X = -25 * attackDirection;
+                                npc.velocity.Y = 0;
                                 charging = true;
                                 setUpNextAIPhasePortals(nextAIPhase);
                             }
@@ -597,7 +598,7 @@ namespace TerrorbornMod.NPCs.Bosses
                                 laserDamage = Main.expertMode ? (laserDamage / 4) : (laserDamage / 2);
                                 Vector2 velocity = rotation * speed;
                                 Projectile.NewProjectile(npc.Center, velocity, ModContent.ProjectileType<Projectiles.CursedBeam>(), laserDamage, 0);
-                                Main.PlaySound(SoundID.Item33, npc.position);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item33, npc.position);
                             }
                         }
                         if (charging)
@@ -634,7 +635,7 @@ namespace TerrorbornMod.NPCs.Bosses
                     //        laserDamage = Main.expertMode ? (laserDamage / 4) : (laserDamage / 2);
                     //        Vector2 velocity = rotation * speed;
                     //        Projectile.NewProjectile(npc.Center, velocity, ModContent.ProjectileType<Projectiles.CursedBeam>(), laserDamage, 0);
-                    //        Main.PlaySound(SoundID.Item33, npc.position);
+                    //        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item33, npc.position);
                     //    }
 
                     //    phaseCounter--;
@@ -650,7 +651,7 @@ namespace TerrorbornMod.NPCs.Bosses
                     //}
                     if (AIPhase == 4) // 'Bullet Hell'
                     {
-                        velocity = Vector2.Zero;
+                        npc.velocity = Vector2.Zero;
                         attackCounter1--;
                         if (attackCounter1 <= 0)
                         {
@@ -748,7 +749,7 @@ namespace TerrorbornMod.NPCs.Bosses
                         if (phaseCounter <= 0)
                         {
                             ShockwaveActivated = true;
-                            Main.PlaySound(SoundID.NPCDeath10, npc.Center);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath10, npc.Center);
                             if (Main.netMode != NetmodeID.Server && !Filters.Scene["Shockwave"].IsActive())
                             {
                                 Filters.Scene.Activate("Shockwave", npc.Center).GetShader().UseColor(1, 3, 45).UseTargetPosition(npc.Center);
@@ -784,7 +785,7 @@ namespace TerrorbornMod.NPCs.Bosses
                         float progress = (90f - attackCounter1) / 60f;
                         Filters.Scene["Shockwave"].GetShader().UseProgress(progress).UseOpacity(100 * (1 - progress / 3f));
                     }
-                    velocity *= 0.95f;
+                    npc.velocity *= 0.95f;
                 }
 
 
@@ -804,7 +805,7 @@ namespace TerrorbornMod.NPCs.Bosses
                         }
                         if (phaseCounter <= 0)
                         {
-                            velocity *= 0.93f;
+                            npc.velocity *= 0.93f;
                             attackCounter1--;
                             if (attackCounter1 <= 0)
                             {
@@ -910,7 +911,7 @@ namespace TerrorbornMod.NPCs.Bosses
                             {
                                 setUpNextAIPhasePortals(nextAIPhase);
                             }
-                            Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
+                            Terraria.Audio.SoundEngine.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
                         }
                         else if (charging)
                         {
@@ -959,13 +960,13 @@ namespace TerrorbornMod.NPCs.Bosses
                             {
                                 if (vertical)
                                 {
-                                    velocity.Y = -25 * attackDirection;
-                                    velocity.X = 0;
+                                    npc.velocity.Y = -25 * attackDirection;
+                                    npc.velocity.X = 0;
                                 }
                                 else
                                 {
-                                    velocity.X = -25 * attackDirection;
-                                    velocity.Y = 0;
+                                    npc.velocity.X = -25 * attackDirection;
+                                    npc.velocity.Y = 0;
                                 }
                                 charging = true;
                                 setUpNextAIPhasePortals(nextAIPhase);
@@ -982,7 +983,7 @@ namespace TerrorbornMod.NPCs.Bosses
                                 laserDamage = Main.expertMode ? (laserDamage / 4) : (laserDamage / 2);
                                 Vector2 velocity = rotation * speed;
                                 Projectile.NewProjectile(npc.Center, velocity, ModContent.ProjectileType<Projectiles.CursedBeam>(), laserDamage, 0);
-                                Main.PlaySound(SoundID.Item33, npc.position);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item33, npc.position);
                             }
                         }
                         else if (!charging)
@@ -993,7 +994,7 @@ namespace TerrorbornMod.NPCs.Bosses
                                 AIPhase = nextAIPhase;
                                 PreAIPhaseSetup(AIPhase, target);
                             }
-                            velocity *= 0.95f;
+                            npc.velocity *= 0.95f;
                         }
                         if (charging)
                         {
@@ -1041,7 +1042,7 @@ namespace TerrorbornMod.NPCs.Bosses
                         }
                         else
                         {
-                            velocity = Vector2.Zero;
+                            npc.velocity = Vector2.Zero;
 
                             if (Math.Abs(spinAttackRotationSpeed) < MathHelper.ToRadians(8f))
                             {
@@ -1061,7 +1062,7 @@ namespace TerrorbornMod.NPCs.Bosses
                                 Vector2 velocity = rotation * speed;
                                 int projID = Projectile.NewProjectile(npc.Center, velocity, ModContent.ProjectileType<Projectiles.CursedBeam>(), laserDamage, 0);
                                 Main.projectile[projID].ai[0] = 1;
-                                Main.PlaySound(SoundID.Item33, npc.position);
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item33, npc.position);
                             }
 
                             phaseCounter--;
@@ -1073,7 +1074,7 @@ namespace TerrorbornMod.NPCs.Bosses
                     }
                     if (AIPhase == 4) // 'Bullet Hell'
                     {
-                        velocity = Vector2.Zero;
+                        npc.velocity = Vector2.Zero;
                         attackCounter1--;
                         if (attackCounter1 <= 0)
                         {
@@ -1179,13 +1180,13 @@ namespace TerrorbornMod.NPCs.Bosses
             }
             else
             {
-                velocity.Y -= 0.5f;
+                npc.velocity.Y -= 0.5f;
                 if (npc.position.Y <= target.position.Y - 1200)
                 {
                     npc.active = false;
                 }
             }
-            npc.velocity = velocity;
+            npc.velocity = npc.velocity;
             npc.direction = dirOverride;
             npc.spriteDirection = -dirOverride;
             npc.rotation += MathHelper.ToRadians(spinSpeed * npc.direction);
@@ -1260,7 +1261,7 @@ namespace TerrorbornMod.NPCs.Bosses
                 actualVelocity = actualVelocity.ToRotation().ToRotationVector2() * phase0MaxSpeed;
             }
             phase0MaxSpeed += 0.25f;
-            velocity = actualVelocity;
+            npc.velocity = actualVelocity;
 
             Vector2 laserVelocity = rotation * laserSpeed;
             int laserDamage = 100;
@@ -1287,7 +1288,7 @@ namespace TerrorbornMod.NPCs.Bosses
                     proj = Projectile.NewProjectile(npc.Center + mirageOffset * 2, laserVelocity * new Vector2(-1, 1), ModContent.ProjectileType<Projectiles.CursedBeam>(), laserDamage, 0);
                     Main.projectile[proj].ai[0] = 2;
                 }
-                Main.PlaySound(SoundID.Item33, npc.position);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item33, npc.position);
             }
         }
 
@@ -1337,7 +1338,7 @@ namespace TerrorbornMod.NPCs.Bosses
 
         void setCharging(float speed, Vector2 direction)
         {
-            velocity = speed * direction;
+            npc.velocity = speed * direction;
             charging = true;
         }
 
@@ -1351,15 +1352,15 @@ namespace TerrorbornMod.NPCs.Bosses
         {
             showPortal = false;
             npc.position = portalPos - new Vector2(npc.width / 2, npc.height / 2);
-            Main.PlaySound(SoundID.Item60, portalPos);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60, portalPos);
             int proj = Projectile.NewProjectile(Main.player[npc.target].Center, Vector2.Zero, ModContent.ProjectileType<TelegraphArrowP1>(), 0, 0);
             Main.projectile[proj].ai[0] = npc.whoAmI;
         }
 
         void preChargeLineup(Vector2 direction, float speed, float drag = 0.92f)
         {
-            velocity += direction * speed;
-            velocity *= drag;
+            npc.velocity += direction * speed;
+            npc.velocity *= drag;
         }
     }
 
@@ -1385,7 +1386,7 @@ namespace TerrorbornMod.NPCs.Bosses
         }
         private void OnSpawn()
         {
-            Main.PlaySound(SoundID.Item20);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20);
             Spawn = false;
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)
@@ -1405,7 +1406,7 @@ namespace TerrorbornMod.NPCs.Bosses
             if (TimeUntilSpeedUp <= 0 && !HasSpedUp)
             {
                 projectile.velocity *= 3;
-                Main.PlaySound(SoundID.Item45);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item45);
                 HasSpedUp = true;
             }
         }

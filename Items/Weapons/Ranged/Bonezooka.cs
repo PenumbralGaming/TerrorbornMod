@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using System;
 using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
@@ -66,7 +67,7 @@ namespace TerrorbornMod.Items.Weapons.Ranged
         public override void Kill(int timeLeft)
         {
             DustExplosion(projectile.Center, 0, 45, 15, 172, DustScale: 1f, NoGravity: true);
-            Main.PlaySound(SoundID.Item14, projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, projectile.Center);
             for (int i = 0; i < 200; i++)
             {
                 NPC npc = Main.npc[i];
@@ -142,7 +143,7 @@ namespace TerrorbornMod.Items.Weapons.Ranged
             }
 
             Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
-            Main.PlaySound(0, projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(0, projectile.position);
             bouncesLeft--;
             if (bouncesLeft <= 0)
             {

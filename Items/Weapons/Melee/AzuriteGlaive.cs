@@ -1,4 +1,5 @@
 ﻿using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -100,7 +101,7 @@ namespace TerrorbornMod.Items.Weapons.Melee
                         }
                         Projectile.NewProjectile(projectile.Center + (ProjectileVelocity / Speed) * 100, ProjectileVelocity, mod.ProjectileType("AquaRay"), projectile.damage, projectile.knockBack, projectile.owner);
                         HasFiredBolt = true;
-                        Main.PlaySound(SoundID.Item60, projectile.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60, projectile.Center);
                     }
                 }
                 else

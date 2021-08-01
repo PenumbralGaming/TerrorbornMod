@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Ammo
 {
@@ -36,7 +37,7 @@ namespace TerrorbornMod.Items.Ammo
         public override string Texture => "TerrorbornMod/Items/Ammo/PincushionArrow";
         public override void SetDefaults()
         {
-            projectile.width = 32;
+            projectile.width = 14;
             projectile.height = 32;
             projectile.ranged = true;
             projectile.timeLeft = 3600;
@@ -62,7 +63,7 @@ namespace TerrorbornMod.Items.Ammo
         {
             if (!stuck)
             {
-                Main.PlaySound(0, projectile.position);
+                Terraria.Audio.SoundEngine.PlaySound(0, projectile.position);
                 stuck = true;
                 wasCrit = crit;
                 stuckNPC = target;
@@ -71,7 +72,7 @@ namespace TerrorbornMod.Items.Ammo
         }
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(0, projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(0, projectile.position);
             Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
             if (stuck)
             {
@@ -86,6 +87,15 @@ namespace TerrorbornMod.Items.Ammo
             }
             return base.CanHitNPC(target);
         }
+
+        public override void ModifyDamageHitbox(ref Rectangle hitbox)
+        {
+            hitbox.Width = 14;
+            hitbox.Height = 14;
+            hitbox.Y += (int)(32f * (14f / 32f) / 2f);
+            base.ModifyDamageHitbox(ref hitbox);
+        }
+
         bool stuck = false;
         bool wasCrit;
         NPC stuckNPC;

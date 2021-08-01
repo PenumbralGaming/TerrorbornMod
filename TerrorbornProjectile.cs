@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using System;
 
 namespace TerrorbornMod
@@ -14,6 +15,11 @@ namespace TerrorbornMod
         bool Start = true;
         int crystalWait = 10;
         public override bool InstancePerEntity => true;
+
+        public bool VeinBurster = false;
+        public bool ContaminatedMarine = false;
+
+        public bool Shadowflame = false;
 
         public override bool CanHitPlayer(Projectile projectile, Player target)
         {
@@ -38,6 +44,12 @@ namespace TerrorbornMod
                 projectile.localNPCHitCooldown = 15;
             }
         }
+
+        public static TerrorbornProjectile modProjectile(Projectile projectile)
+        {
+            return projectile.GetGlobalProjectile<TerrorbornProjectile>();
+        }
+
         public override void OnHitNPC(Projectile projectile, NPC target, int damage, float knockback, bool crit)
         {
             Player player = Main.player[projectile.owner];
@@ -51,6 +63,34 @@ namespace TerrorbornMod
                     modPlayer.SangoonBandCooldown = 20;
                 }
             }
+
+            if (VeinBurster)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath21, target.Center);
+                for (int i = 0; i < Main.rand.Next(3, 5); i++)
+                {
+                    Vector2 direction = MathHelper.ToRadians(Main.rand.Next(360)).ToRotationVector2();
+                    float speed = Main.rand.Next(25, 35);
+                    int proj = Projectile.NewProjectile(projectile.GetProjectileSource_FromThis(), target.Center, direction * speed, ModContent.ProjectileType<Projectiles.VeinBurst>(), damage, 0f, player.whoAmI);
+                    Main.projectile[proj].DamageType = DamageClass.Ranged;
+                }
+            }
+
+            if (ContaminatedMarine)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
+                for (int i = 0; i < Main.rand.Next(7, 9); i++)
+                {
+                    Vector2 direction = MathHelper.ToRadians(Main.rand.Next(360)).ToRotationVector2();
+                    float speed = Main.rand.Next(25, 35);
+                    Projectile.NewProjectile(projectile.GetProjectileSource_FromThis(), target.Center, direction * speed, ModContent.ProjectileType<Items.Weapons.Restless.NightmareBoilRanged>(), damage, 0f, player.whoAmI);
+                }
+            }
+
+            if (Shadowflame)
+            {
+                target.AddBuff(BuffID.ShadowFlame, 60 * 3);
+            }
         }
 
         int hellfireCooldown = 120;
@@ -62,12 +102,12 @@ namespace TerrorbornMod
             if (modPlayer.IncendiusArmorBonus && projectile.minion)
             {
                 hellfireCooldown--;
-                if (hellfireCooldown <= 0 && player.HeldItem.summon)
+                if (hellfireCooldown <= 0 && player.HeldItem.DamageType == DamageClass.Summon)
                 {
                     float speed = 15f;
                     hellfireCooldown = 120;
                     Vector2 velocity = projectile.DirectionTo(Main.MouseWorld) * speed;
-                    Projectile.NewProjectile(projectile.Center, velocity, ModContent.ProjectileType<Items.Equipable.Armor.HellFire>(), (int)(18 * projectile.minionSlots), 0.01f, projectile.owner);
+                    Projectile.NewProjectile(projectile.GetProjectileSource_FromThis(), projectile.Center, velocity, ModContent.ProjectileType<Items.Equipable.Armor.HellFire>(), (int)(18 * projectile.minionSlots), 0.01f, projectile.owner);
                 }
             }
 
@@ -81,7 +121,7 @@ namespace TerrorbornMod
 
             if (projectile.friendly)
             {
-                if (player.HasBuff(mod.BuffType("HuntersMark")) && projectile.ranged)
+                if (player.HasBuff(ModContent.BuffType<Items.Equipable.Armor.HuntersMark>()) && projectile.DamageType == DamageClass.Ranged)
                 {
                     NPC targetNPC = Main.npc[0];
                     float Distance = 375; //max distance away
@@ -105,6 +145,14 @@ namespace TerrorbornMod
                         projectile.velocity = projectile.velocity.ToRotation().AngleTowards(projectile.DirectionTo(targetNPC.Center).ToRotation(), MathHelper.ToRadians(2.5f * (projectile.velocity.Length() / 20))).ToRotationVector2() * projectile.velocity.Length();
                     }
                 }
+            }
+
+            if (Shadowflame)
+            {
+                Dust dust = Dust.NewDustPerfect(projectile.Center, 27);
+                dust.noGravity = true;
+                dust.velocity = Vector2.Zero;
+                dust.scale = 2f;
             }
         }
     }

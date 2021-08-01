@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -90,7 +91,7 @@ namespace TerrorbornMod.Items.PrototypeI
         }
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item27, projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27, projectile.position);
         }
         public override void AI()
         {

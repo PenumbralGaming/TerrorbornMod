@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Weapons.Ranged
 {
@@ -42,7 +43,7 @@ namespace TerrorbornMod.Items.Weapons.Ranged
         }
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            Main.PlaySound(SoundID.Item63, player.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item63, player.Center);
             player.itemRotation = player.DirectionTo(Main.MouseWorld).ToRotation();
             if (player.direction == -1)
             {

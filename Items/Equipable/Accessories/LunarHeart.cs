@@ -1,6 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 
@@ -162,7 +163,7 @@ namespace TerrorbornMod.Items.Equipable.Accessories
                 {
                     superiorPlayer.TerrorPercent -= 3f;
                     azuriteCounter = 40;
-                    Main.PlaySound(SoundID.Item110, projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item110, projectile.Center);
                     for (int i = 0; i < Main.rand.Next(3, 5); i++)
                     {
                         float speed = Main.rand.Next(25, 40);

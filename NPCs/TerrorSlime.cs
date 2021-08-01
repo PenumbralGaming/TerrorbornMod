@@ -4,6 +4,7 @@ using Terraria.ID;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace TerrorbornMod.NPCs
@@ -45,6 +46,22 @@ namespace TerrorbornMod.NPCs
         {
             Item.NewItem(npc.getRect(), ItemID.Gel, Main.rand.Next(1, 3));
             Item.NewItem(npc.getRect(), ModContent.ItemType<Items.DarkEnergy>());
+
+            TerrorbornPlayer modPlayer = TerrorbornPlayer.modPlayer(Main.LocalPlayer);
+            if (modPlayer.DeimosteelCharm)
+            {
+                if (Main.rand.NextFloat() <= 0.5f)
+                {
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Materials.TerrorSample>());
+                }
+            }
+            else
+            {
+                if (Main.rand.NextFloat() <= 0.25f)
+                {
+                    Item.NewItem(npc.getRect(), ModContent.ItemType<Items.Materials.TerrorSample>());
+                }
+            }
         }
         //int frame = 0;
         //public override void FindFrame(int frameHeight)

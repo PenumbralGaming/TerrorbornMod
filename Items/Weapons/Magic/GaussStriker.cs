@@ -1,10 +1,12 @@
 ﻿using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Terraria.ID;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 
@@ -14,32 +16,23 @@ namespace TerrorbornMod.Items.Weapons.Magic
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Right click to fire an accelerating, high knockback shockwave." +
-                "\nHitting enemies with this shockwave will make them temporarily weaker to your bolts.");
+            Tooltip.SetDefault("Fires eratic, but infinitely piercing, bolts of lightning");
         }
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.MythrilBar);
-            recipe.AddIngredient(ItemID.SoulofNight, 15);
-            recipe.AddIngredient(ItemID.SpaceGun);
+            recipe.AddIngredient(ModContent.ItemType<Items.Materials.ThunderShard>(), 18);
+            recipe.AddIngredient(ModContent.ItemType<Items.Materials.NoxiousScale>(), 12);
             recipe.AddTile(TileID.MythrilAnvil);
             recipe.SetResult(this);
             recipe.AddRecipe();
-            ModRecipe recipe2 = new ModRecipe(mod);
-            recipe2.AddIngredient(ItemID.OrichalcumBar);
-            recipe2.AddIngredient(ItemID.SoulofNight, 15);
-            recipe2.AddIngredient(ItemID.SpaceGun);
-            recipe2.AddTile(TileID.MythrilAnvil);
-            recipe2.SetResult(this);
-            recipe2.AddRecipe();
         }
         public override void SetDefaults()
         {
-            item.damage = 30;
+            item.damage = 50;
             item.noMelee = true;
             item.width = 48;
-            item.height = 26;
+            item.height = 20;
             item.useTime = 8;
             item.shoot = 10;
             item.useAnimation = 8;
@@ -54,60 +47,37 @@ namespace TerrorbornMod.Items.Weapons.Magic
             item.mana = 3;
             item.magic = true;
         }
-        public override bool AltFunctionUse(Player player)
-        {
-            return true;
-        }
-        public override bool CanUseItem(Player player)
-        {
-            if (player.altFunctionUse == 2)
-            {
-                item.reuseDelay = 20;
-                item.shoot = mod.ProjectileType("GaussShockwave");
-                item.shootSpeed = 1f;
-            }
-            else
-            {
-                item.shoot = mod.ProjectileType("GaussBolt");
-                item.shootSpeed = 25f;
-                item.reuseDelay = 0;
-            }
-            return base.CanUseItem(player);
-        }
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
-        {
-            if (player.altFunctionUse == 2)
-            {
-                damage *= 2;
-                knockBack = 13;
-            }
-            return base.Shoot(player, ref position, ref speedX, ref speedY, ref type, ref damage, ref knockBack);
-        }
+
         public override Vector2? HoldoutOffset()
         {
             return new Vector2(-5, 0);
         }
     }
+
     class GaussBolt : ModProjectile
     {
+        public override string Texture { get { return "Terraria/Projectile_" + ProjectileID.ShadowBeamFriendly; } }
+
         public override void SetStaticDefaults()
         {
             Main.projFrames[projectile.type] = 4;
         }
         public override void SetDefaults()
         {
-            projectile.width = 16;
+            projectile.width = 30;
             projectile.height = 30;
             projectile.aiStyle = 0;
             projectile.tileCollide = true;
             projectile.friendly = true;
-            projectile.penetrate = 5;
+            projectile.penetrate = 25;
             projectile.hostile = false;
             projectile.magic = true;
             projectile.ignoreWater = true;
             projectile.timeLeft = 400;
             projectile.usesLocalNPCImmunity = true;
             projectile.localNPCHitCooldown = -1;
+            projectile.extraUpdates = 100;
+            projectile.hide = true;
         }
 
         void FindFrame(int FrameHeight)
@@ -123,82 +93,52 @@ namespace TerrorbornMod.Items.Weapons.Magic
                 projectile.frame = 0;
             }
         }
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
-        {
-            if (target.HasBuff(ModContent.BuffType<GaussWeakness>()))
-            {
-                damage = (int)(damage * 1.75f);
-            }
-        }
-        public override void AI()
-        {
-            FindFrame(projectile.height);
-            projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X) + 1.57f;
-        }
-    }
-    class GaussShockwave : ModProjectile
-    {
-        public override void SetStaticDefaults()
-        {
-            Main.projFrames[projectile.type] = 3;
-        }
-        public override void SetDefaults()
-        {
-            projectile.width = 46;
-            projectile.height = 22;
-            projectile.aiStyle = 0;
-            projectile.tileCollide = true;
-            projectile.friendly = true;
-            projectile.penetrate = 1;
-            projectile.hostile = false;
-            projectile.magic = true;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 400;
-        }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<GaussWeakness>(), 60 * 5);
-        }
-        void FindFrame(int FrameHeight)
-        {
-            projectile.frameCounter--;
-            if (projectile.frameCounter <= 0)
-            {
-                projectile.frame++;
-                projectile.frameCounter = 5;
-            }
-            if (projectile.frame >= Main.projFrames[projectile.type])
-            {
-                projectile.frame = 0;
-            }
-        }
-        public override void AI()
-        {
-            FindFrame(projectile.height);
-            projectile.rotation = (float)Math.Atan2((double)projectile.velocity.Y, (double)projectile.velocity.X) + 1.57f;
-            float rotation = projectile.velocity.ToRotation() - MathHelper.ToRadians(180);
-            float Speed = 1f;
-            projectile.velocity += new Vector2((float)((Math.Cos(rotation) * Speed) * -1), (float)((Math.Sin(rotation) * Speed) * -1));
-        }
-    }
-    class GaussWeakness : ModBuff
-    {
-        public override void SetDefaults()
-        {
-            DisplayName.SetDefault("Gauss Weakness");
-            Main.debuff[Type] = true;
-            Main.pvpBuff[Type] = false;
-            Main.buffNoSave[Type] = false;
-            longerExpertDebuff = false;
-        }
-        public override void Update(NPC npc, ref int buffIndex)
-        {
-            int dust = Dust.NewDust(npc.position, npc.width, npc.height, 21, 0, 0, Scale: 2);
-            Main.dust[dust].noGravity = true;
-            Main.dust[dust].velocity = npc.velocity;
-        }
-    }
 
+        //public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        //{
+        //    base.PostDraw(spriteBatch, lightColor);
+        //    Texture2D texture = ModContent.GetTexture(Texture);
+        //    Vector2 position = projectile.position - Main.screenPosition;
+        //    position += new Vector2(projectile.width / 2, projectile.height / 2);
+        //    //position.Y += 4;
+        //    Main.spriteBatch.Draw(texture, new Rectangle((int)position.X, (int)position.Y, projectile.width, projectile.height), new Rectangle(0, projectile.frame * projectile.height, projectile.width, projectile.height), projectile.GetAlpha(Color.White), projectile.rotation, new Vector2(projectile.width / 2, projectile.height / 2), SpriteEffects.None, 0);
+        //}
+
+        bool start = true;
+        float rotationCounter = 15;
+        public override void AI()
+        {
+            if (start)
+            {
+                start = false;
+                projectile.velocity = projectile.velocity.RotatedByRandom(MathHelper.ToRadians(25));
+            }
+
+            //FindFrame(projectile.height);
+            //projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(90);
+
+            if (Main.player[projectile.owner].Distance(projectile.Center) > 30)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    int dust = Dust.NewDust(projectile.Center - (projectile.velocity * i / 4), 1, 1, 62, 0, 0, Scale: 2, newColor: Color.White);
+                    Main.dust[dust].noGravity = true;
+
+                    Vector2 direction = MathHelper.ToRadians(Main.rand.Next(360)).ToRotationVector2();
+                    float speed = Main.rand.NextFloat(1.5f, 3f);
+
+                    Main.dust[dust].velocity = direction * speed;
+                }
+            }
+
+            rotationCounter--;
+            if (rotationCounter <= 0)
+            {
+                rotationCounter = Main.rand.Next(10, 20);
+                projectile.velocity = projectile.velocity.RotatedByRandom(MathHelper.ToRadians(25));
+            }
+        }
+    }
 }
 
 

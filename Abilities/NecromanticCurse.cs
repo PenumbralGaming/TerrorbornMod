@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using TerrorbornMod;
 using Terraria.ID;
 
@@ -55,7 +56,7 @@ namespace TerrorbornMod.Abilities
             float speed = 20;
             Vector2 velocity = player.DirectionTo(Main.MouseWorld) * speed;
             int proj = Projectile.NewProjectile(player.Center, velocity, ModContent.ProjectileType<DungeonSpirit>(), 1, 5, player.whoAmI);
-            Main.PlaySound(SoundID.NPCDeath52, player.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath52, player.Center);
 
             TerrorbornPlayer modPlayer = TerrorbornPlayer.modPlayer(player);
             if (modPlayer.SanguineSetBonus)
@@ -120,7 +121,7 @@ namespace TerrorbornMod.Abilities
             TerrorbornNPC modNPC = TerrorbornNPC.modNPC(target);
             modNPC.soulSplitTime = 60 * 5;
             CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y, target.width, target.height), Color.LightCyan, "Soul Split");
-            Main.PlaySound(SoundID.Item103, target.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item103, target.Center);
         }
     }
 

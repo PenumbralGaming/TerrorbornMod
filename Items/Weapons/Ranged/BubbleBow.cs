@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using System;
 using Terraria.ModLoader.Exceptions;
 
@@ -51,7 +52,6 @@ namespace TerrorbornMod.Items.Weapons.Ranged
             //projectile.extraUpdates = 100;
             projectile.timeLeft = 200;
             projectile.penetrate = 1;
-            projectile.light = 0.25f;
         }
         public override void AI()
         {
@@ -86,12 +86,11 @@ namespace TerrorbornMod.Items.Weapons.Ranged
             //projectile.extraUpdates = 100;
             projectile.timeLeft = 60;
             projectile.penetrate = 1;
-            projectile.light = 0.25f;
             projectile.hide = false;
         }
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item54, projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item54, projectile.position);
         }
     }
 }

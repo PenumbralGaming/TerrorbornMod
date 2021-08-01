@@ -4,6 +4,7 @@ using Terraria.ID;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.NPCs
 {
@@ -25,7 +26,7 @@ namespace TerrorbornMod.NPCs
             npc.HitSound = SoundID.NPCHit41;
             npc.DeathSound = SoundID.NPCDeath52;
             npc.value = 250;
-            npc.knockBackResist = 0f;
+            npc.knockBackResist = 0.1f;
             npc.aiStyle = 22;
             npc.lavaImmune = true;
             npc.buffImmune[BuffID.OnFire] = true;
@@ -65,13 +66,13 @@ namespace TerrorbornMod.NPCs
         }
         public override void NPCLoot()
         {
-            Item.NewItem(npc.position, npc.width, npc.height, ModContent.ItemType<Items.Materials.IncendiusAlloy>(), Main.rand.Next(3, 6));
+            Item.NewItem(npc.position, npc.width, npc.height, ModContent.ItemType<Items.Materials.IncendiusAlloy>(), Main.rand.Next(8, 13));
         }
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             if (Main.hardMode)
             {
-                return SpawnCondition.Cavern.Chance * .11f;
+                return SpawnCondition.Cavern.Chance * .07f;
             }
             else
             {

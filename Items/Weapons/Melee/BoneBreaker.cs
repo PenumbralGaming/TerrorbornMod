@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -36,10 +37,10 @@ namespace TerrorbornMod.Items.Weapons.Melee
         }
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {
-            Main.PlaySound(SoundID.DD2_SkeletonHurt, target.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_SkeletonHurt, target.Center);
             if (crit)
             {
-                Main.PlaySound(SoundID.DD2_SkeletonDeath);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_SkeletonDeath);
             }
 
             for (int i = 0; i < Main.rand.Next(2, 4); i++)
@@ -74,7 +75,7 @@ namespace TerrorbornMod.Items.Weapons.Melee
         }
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.NPCHit2, projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit2, projectile.Center);
 
             for (int i = 0; i < Main.rand.Next(2, 4); i++)
             {

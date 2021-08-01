@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Weapons.Ranged
 {
@@ -57,6 +58,7 @@ namespace TerrorbornMod.Items.Weapons.Ranged
             return true;
         }
     }
+
     class BoltBallista : ModItem
     {
         int firesTilBolt = 1;
@@ -100,11 +102,12 @@ namespace TerrorbornMod.Items.Weapons.Ranged
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(mod.ItemType("StormsWrath"));
+            recipe.AddIngredient(ModContent.ItemType<Materials.ThunderShard>(), 20);
             recipe.AddIngredient(ItemID.SoulofLight, 5);
             recipe.AddIngredient(ItemID.SoulofNight, 5);
-            recipe.AddTile(TileID.MythrilAnvil);
-            recipe.AddIngredient(mod.ItemType("StormsWrath"));
             recipe.AddIngredient(ItemID.SoulofFlight, 15);
+            recipe.AddTile(TileID.MythrilAnvil);
             recipe.SetResult(this);
             recipe.AddRecipe();
         }
@@ -114,7 +117,7 @@ namespace TerrorbornMod.Items.Weapons.Ranged
             firesTilBolt--;
             if (firesTilBolt <= 0)
             {
-                Main.PlaySound(SoundID.Item75, position);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item75, position);
                 firesTilBolt = 2;
                 for (int i = 0; i < 2; i++)
                 {
@@ -125,6 +128,7 @@ namespace TerrorbornMod.Items.Weapons.Ranged
             return true;
         }
     }
+
     class StormsBeam : ModProjectile
     {
         public override void SetStaticDefaults()
@@ -166,6 +170,7 @@ namespace TerrorbornMod.Items.Weapons.Ranged
             Main.dust[dust].velocity *= 0.2f;
         }
     }
+
     class StormsBolt : ModProjectile
     {
         public override string Texture { get { return "Terraria/Projectile_" + ProjectileID.ShadowBeamFriendly; } }
@@ -195,6 +200,7 @@ namespace TerrorbornMod.Items.Weapons.Ranged
             Main.dust[dust].velocity *= 0.2f;
         }
     }
+
     class ThunderArrow : ModProjectile
     {
         public override void SetStaticDefaults()

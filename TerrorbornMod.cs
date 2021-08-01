@@ -9,8 +9,9 @@ using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.Localization;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Terraria.UI;
 using TerrorbornMod;
 using Terraria.Map;
@@ -44,14 +45,37 @@ namespace TerrorbornMod
 
         public static float screenShaking = 0f;
 
-        public static Vector2 soulChargeMeterPos;
-        public static bool alwaysShowSoulCharge;
-        public static bool fullMeterSound;
-        public static float soulChargeMeterScale;
+        public static bool StartingItems = true;
 
         public static void ScreenShake(float Intensity)
         {
             screenShaking = Intensity;
+        }
+
+        public override void Unload()
+        {
+            Main.rainTexture = ModContent.GetTexture("Terraria/Rain");
+        }
+
+        public override void UpdateMusic(ref int music, ref MusicPriority priority)
+        {
+            if (!Main.gameMenu)
+            {
+                Player player = Main.LocalPlayer;
+                TerrorbornPlayer modPlayer = TerrorbornPlayer.modPlayer(player);
+
+                if (modPlayer.ZoneDeimostone)
+                {
+                    music = GetSoundSlot(SoundType.Music, "Sounds/Music/CreepyCaverns");
+                    priority = MusicPriority.BiomeHigh;
+                }
+
+                if (TerrorbornWorld.terrorRain && Main.raining && player.ZoneRain)
+                {
+                    music = GetSoundSlot(SoundType.Music, "Sounds/Music/DarkRain");
+                    priority = MusicPriority.Event;
+                }
+            }
         }
 
         public TerrorbornMod()
@@ -94,12 +118,12 @@ namespace TerrorbornMod
         }
         public override void Load()
         {
-            ArmorAbility = RegisterHotKey("ArmorAbility", "z");
-            ShriekOfHorror = RegisterHotKey("Shriek of Horror", "F");
+            ArmorAbility = RegisterHotKey("ArmorAbility", "Z");
+            ShriekOfHorror = RegisterHotKey("Shriek of Horror", "Q");
             PrimaryTerrorAbility = RegisterHotKey("Primary Terror Ability", "F");
-            SecondaryTerrorAbility = RegisterHotKey("Secondary Terror Ability", "F");
-            quickVirus = RegisterHotKey("Quick Virus", "z");
-            OpenTerrorAbilityMenu = RegisterHotKey("Open/Close Terror Ability Menu", "z");
+            SecondaryTerrorAbility = RegisterHotKey("Secondary Terror Ability", "X");
+            quickVirus = RegisterHotKey("Quick Spark", "T");
+            OpenTerrorAbilityMenu = RegisterHotKey("Open/Close Terror Ability Menu", "P");
             CombatTokenCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new CombatTokenCurrency(ItemType("CombatToken"), 999L));
 
             if (Main.netMode != NetmodeID.Server)
@@ -184,6 +208,70 @@ namespace TerrorbornMod
                        InterfaceScaleType.UI));
             }
         }
+
+        public static void TerrorThunder()
+        {
+            positionLightning = 1f;
+            //transitionColor = Color.FromNonPremultiplied((int)(209f), (int)(138f), (int)(255f), 255);
+            ScreenShake(10);
+            ModContent.GetSound("TerrorbornMod/Sounds/Effects/ThunderAmbience").Play(Main.ambientVolume, Main.rand.NextFloat(-0.25f, 0.25f), Main.rand.NextFloat(-0.3f, 0.3f));
+        }
+
+        public static Color darkRainColor = Color.FromNonPremultiplied((int)(40f * 0.7f), (int)(55f * 0.7f), (int)(70f * 0.7f), 255);
+        public static Color transitionColor = Color.White;
+        public static Color lightningColor = Color.FromNonPremultiplied((int)(209f), (int)(138f), (int)(255f), 255);
+        public static float positionForward = 0f;
+        public static float positionBackward = 0f;
+        public static float positionLightning = 0f;
+        public static float transitionTime = 600f;
+
+        public override void ModifyLightingBrightness(ref float scale)
+        {
+            if (TerrorbornWorld.terrorRain && Main.raining && Main.LocalPlayer.ZoneRain && !Main.dayTime)
+            {
+                scale *= 0.92f;
+            }
+        }
+
+        public override void ModifySunLightColor(ref Color tileColor, ref Color backgroundColor)
+        {
+            if (TerrorbornWorld.terrorRain && Main.raining)
+            {
+                positionBackward = 0f;
+                if (positionForward < 1f)
+                {
+                    positionForward += 1f / transitionTime;
+                }
+                else
+                {
+                    positionForward = 1f;
+                }
+                transitionColor = Color.Lerp(transitionColor, darkRainColor, positionForward);
+                tileColor = tileColor.MultiplyRGBA(transitionColor);
+                backgroundColor = backgroundColor.MultiplyRGBA(transitionColor);
+                if (positionLightning > 0f)
+                {
+                    positionLightning -= 1f / 30f;
+                    backgroundColor = Color.Lerp(backgroundColor, lightningColor, positionLightning);
+                }
+            }
+            else if (transitionColor != Color.White)
+            {
+                positionForward = 0f;
+                if (positionBackward < 1f)
+                {
+                    positionBackward += 1f / transitionTime;
+                }
+                else
+                {
+                    positionBackward = 1f;
+                }
+                transitionColor = Color.Lerp(transitionColor, Color.White, positionBackward);
+                tileColor = tileColor.MultiplyRGBA(transitionColor);
+                backgroundColor = backgroundColor.MultiplyRGBA(transitionColor);
+            }
+        }
+
         public override void PostUpdateEverything()
         {
             TerrorbornUtils.Update();
@@ -224,6 +312,17 @@ namespace TerrorbornMod
             if (yabhb != null)
             {
                 yabhb.Call("RegisterHealthBar", ModContent.NPCType<NPCs.Bosses.Sangrune>());
+                yabhb.Call("RegisterHealthBarMini", ModContent.NPCType<NPCs.TerrorRain.FrightcrawlerHead>());
+            }
+
+            Mod fargos = ModLoader.GetMod("Fargowiltas");
+            if (fargos != null)
+            {
+                fargos.Call("AddEventSummon", 1f, "TerrorbornMod", "BrainStorm", (Func<bool>)(() => TerrorbornWorld.downedTerrorRain), Item.buyPrice(0, 15, 0, 0));
+                fargos.Call("AddSummon", 3.5f, "TerrorbornMod", "LunarRitual", (Func<bool>)(() => TerrorbornWorld.downedTidalTitan), Item.buyPrice(0, 15, 0, 0));
+                fargos.Call("AddSummon", 5.5f, "TerrorbornMod", "DriedCanteen", (Func<bool>)(() => TerrorbornWorld.downedDunestock), Item.buyPrice(0, 25, 0, 0));
+                fargos.Call("AddSummon", 9.5f, "TerrorbornMod", "RadioactiveSpiderFood", (Func<bool>)(() => TerrorbornWorld.downedShadowcrawler), Item.buyPrice(0, 15, 0, 0));
+                fargos.Call("AddSummon", 11.35f, "TerrorbornMod", "PlasmaCore", (Func<bool>)(() => TerrorbornWorld.downedPrototypeI), Item.buyPrice(0, 50, 0, 0));
             }
 
             Mod bossChecklist = ModLoader.GetMod("BossChecklist");
@@ -231,12 +330,14 @@ namespace TerrorbornMod
             {
                 bossChecklist.Call("AddBossWithInfo", "Tidal Titan", 3.5f, (Func<bool>)(() => TerrorbornWorld.downedTidalTitan), "Kill a mysterious crab, which rarely spawns in the ocean biome during the night. Despawns if it sinks back into the water (a layer of platforms over the ocean is recommended). Note: doesn't despawn when it becomes day");
                 bossChecklist.Call("AddBossWithInfo", "Dunestock", 5.5f, (Func<bool>)(() => TerrorbornWorld.downedDunestock), "Use a [i:" + ModContent.ItemType<Items.DriedCanteen>() + "] in the desert.");
-                bossChecklist.Call("AddBossWithInfo", "Shadowcrawler", 9.5f, (Func<bool>)(() => TerrorbornWorld.downedNightcrawler), "Use a [i:" + ModContent.ItemType<Items.RadioactiveSpiderFood>() + "] during the night.");
+                bossChecklist.Call("AddBossWithInfo", "Shadowcrawler", 9.5f, (Func<bool>)(() => TerrorbornWorld.downedShadowcrawler), "Use a [i:" + ModContent.ItemType<Items.RadioactiveSpiderFood>() + "] during the night.");
                 bossChecklist.Call("AddBossWithInfo", "Prototype I", 11.35f, (Func<bool>)(() => TerrorbornWorld.downedPrototypeI), "Use a [i:" + ModContent.ItemType<Items.PlasmaCore>() + "] during the night.");
                 bossChecklist.Call("AddMiniBossWithInfo", "Sangrune", 3.25f, (Func<bool>)(() => TerrorbornWorld.downedSangrune), "Spawns during a blood moon after the eater of worlds/brain of cthulhu have been defeated.");
                 bossChecklist.Call("AddMiniBossWithInfo", "Sangrune (hardmode)", 7.5f, (Func<bool>)(() => TerrorbornWorld.downedSangrune2), "Re-fight Sangrune after the Wall of Flesh has been defeated.");
                 bossChecklist.Call("AddMiniBossWithInfo", "Undying Spirit", 6.05f, (Func<bool>)(() => TerrorbornWorld.downedUndyingSpirit), "A strange eratic ghost that 'died' long ago. Spawns occasionally in the corruption: be wary.");
                 bossChecklist.Call("AddEventWithInfo", "???", -5f, (Func<bool>)(() => TerrorbornWorld.obtainedShriekOfHorror), "Follow the [i:" + ModContent.ItemType<Items.MysteriousCompass>() + "]'s guidance");
+                bossChecklist.Call("AddEventWithInfo", "Astraphobia", 6.06f, (Func<bool>)(() => TerrorbornWorld.downedTerrorRain), "Has a chance to occur instead of rain. Can be manually summoned by using a [i:" + ModContent.ItemType<Items.MiscConsumables.BrainStorm>() + "] during rain.");
+                bossChecklist.Call("AddMiniBossWithInfo", "Frightcrawler", 6.07f, (Func<bool>)(() => TerrorbornWorld.downedFrightcrawler), "Spawns during the Astraphobia event (see above).");
             }
         }
     }

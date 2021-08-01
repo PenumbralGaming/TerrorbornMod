@@ -5,7 +5,8 @@ using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
+using static Terraria.ModLoader.ModContent;
+using Terraria.WorldBuilding;
 
 namespace TerrorbornMod.NPCs.Bosses
 {
@@ -68,7 +69,7 @@ namespace TerrorbornMod.NPCs.Bosses
         public override bool PreNPCLoot()
         {
             NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y + 37, mod.NPCType("TidalTitan"));
-            Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
+            Terraria.Audio.SoundEngine.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
             TerrorbornMod.ScreenShake(40f);
             return false;
         }
@@ -107,14 +108,25 @@ namespace TerrorbornMod.NPCs.Bosses
             {
                 int captive = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, mod.NPCType("TidalBubble"));
             }
-            Main.PlaySound(SoundID.Item85, npc.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item85, npc.Center);
             //float rotation = (float)Math.Atan2(vector8.Y - (Main.player[npc.target].position.Y + (Main.player[npc.target].height * 0.5f)), vector8.X - (Main.player[npc.target].position.X + (Main.player[npc.target].width * 0.5f)));
             //Main.npc[captive].velocity = new Vector2((float)((Math.Cos(rotation) * Speed) * -1), (float)((Math.Sin(rotation) * Speed) * -1));
         }
+
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+        {
+            if (AIPhase == 3 && PhaseTimeLeft > 0)
+            {
+                return false;
+            }
+            return base.CanHitPlayer(target, ref cooldownSlot);
+        }
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[npc.type] = 17;
         }
+
         public override void SetDefaults()
         {
             npc.noGravity = false;
@@ -130,27 +142,33 @@ namespace TerrorbornMod.NPCs.Bosses
             Main.raining = true;
             npc.frame.Width = 388;
             npc.frame.Height = 254;
-            npc.lifeMax = 5625; //6000
+            npc.lifeMax = 4500;
             npc.knockBackResist = 0;
             npc.buffImmune[BuffID.OnFire] = true;
             npc.buffImmune[BuffID.Ichor] = true;
             npc.buffImmune[BuffID.CursedInferno] = true;
         }
+
         public override void NPCLoot()
         {
             if (!TerrorbornWorld.downedTidalTitan)
             {
                 TerrorbornWorld.downedTidalTitan = true;
-                Main.NewText("The caverns are flooded with Azurite ore", 37, 173, 255);
+                Main.NewText("Azurite Ore forms in caverns below the ocean", 37, 173, 255);
                 Main.NewText("Lunar energy blesses the rain", 75, 253, 248);
-                for (int k = 0; k < (int)((double)(Main.maxTilesX * Main.maxTilesY) * 6E-05); k++)
+
+                for (int k = 0; k < (int)((double)(Main.maxTilesX * Main.maxTilesY) * 6E-05) / 12; k++)
                 {
-                    int x = WorldGen.genRand.Next(0, Main.maxTilesX);
+                    int x = WorldGen.genRand.Next(20, 380);
                     int y = WorldGen.genRand.Next((int)(Main.maxTilesY * 0.3f), Main.maxTilesY);
-                    if (Main.tile[x, y].type == TileID.Dirt || Main.tile[x, y].type == TileID.Stone || Main.tile[x, y].type == TileID.Mud || Main.tile[x, y].type == TileID.SnowBlock || Main.tile[x, y].type == TileID.IceBlock)
-                    {
-                        WorldGen.TileRunner(x, y, (double)WorldGen.genRand.Next(5, 8), WorldGen.genRand.Next(3, 6), mod.TileType("Azurite"), false, 0f, 0f, false, true);
-                    }
+                    WorldGen.TileRunner(x, y, (double)WorldGen.genRand.Next(5, 8), WorldGen.genRand.Next(3, 6), mod.TileType("Azurite"), false, 0f, 0f, false, true);
+                }
+
+                for (int k = 0; k < (int)((double)(Main.maxTilesX * Main.maxTilesY) * 6E-05) / 12; k++)
+                {
+                    int x = WorldGen.genRand.Next(Main.maxTilesX - 380, Main.maxTilesX - 20);
+                    int y = WorldGen.genRand.Next((int)(Main.maxTilesY * 0.3f), Main.maxTilesY);
+                    WorldGen.TileRunner(x, y, (double)WorldGen.genRand.Next(5, 8), WorldGen.genRand.Next(3, 6), mod.TileType("Azurite"), false, 0f, 0f, false, true);
                 }
             }
             Item.NewItem((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height, mod.ItemType("AzuriteOre"), Main.rand.Next(15, 26));
@@ -185,6 +203,7 @@ namespace TerrorbornMod.NPCs.Bosses
         //Stand = 0;
         //Walking = 1 - 6
         //Slamdown = 6-11
+        //Jump = 7
         //Mess with crabbo you get stabbo = 12-16
         public override void FindFrame(int frameHeight)
         {
@@ -199,7 +218,7 @@ namespace TerrorbornMod.NPCs.Bosses
                 FrameWait = FrameSpeed;
                 frame++;
             }
-            if (frame > 5)
+            if (frame > 6)
             {
                 frame = 0;
             }
@@ -223,21 +242,35 @@ namespace TerrorbornMod.NPCs.Bosses
 
             //for (position = Main.player[npc.target].Center; Main.tileSolid[Main.tile[(int)position.X / 16, (int)position.Y / 16].type]; position.Y += 0.25f) ;
             Projectile.NewProjectile(position, new Vector2(0, 0), mod.ProjectileType("TideFireWait"), 30, 0, ai0: 100);
-            Main.PlaySound(SoundID.Item117, position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item117, position);
         }
+
+        void DecideNextAIPhase()
+        {
+            PlannedAIPhase = Main.rand.Next(1, 6);
+            while (PlannedAIPhase == AIPhase || (PlannedAIPhase == 3 && JumpCooldown > 0) || (PlannedAIPhase == 5 && bubbleAttackCooldown > 0))
+            {
+                PlannedAIPhase = Main.rand.Next(1, 6);
+            }
+        }
+
         int AIPhase = 0;
         int PlannedAIPhase = 1;
         int waitingTime = 50;
         int PhaseTimeLeft = 120;
-        bool JumpDirectionLeft;
-        int ExpertUntilWalkFire = 0;
         int BubbleWait = 60;
         int BubblesToFire = 4;
         int JumpCooldown = 0;
         int requiredJumpWait = 600;
+        int bubbleAttackCooldown = 0;
+        Vector2 jumpTarget;
 
         public override void AI()
         {
+            if (bubbleAttackCooldown > 0)
+            {
+                bubbleAttackCooldown--;
+            }
             if (requiredJumpWait > 900 - ((npc.lifeMax - npc.life) / npc.lifeMax) * 450)
             {
                 requiredJumpWait = 900 - ((npc.lifeMax - npc.life) / npc.lifeMax) * 450;
@@ -299,7 +332,15 @@ namespace TerrorbornMod.NPCs.Bosses
                 }
                 if (waitingTime <= 0)
                 {
+                    if (requiredJumpWait <= 0)
+                    {
+                        PlannedAIPhase = 3;
+                    }
                     AIPhase = PlannedAIPhase;
+                    if (PlannedAIPhase == 1)
+                    {
+                        BubbleWait = 120;
+                    }
                     if (PlannedAIPhase == 2)
                     {
                         frame = 12;
@@ -307,61 +348,48 @@ namespace TerrorbornMod.NPCs.Bosses
                     if (PlannedAIPhase == 3)
                     {
                         frame = 7;
-                        npc.velocity.Y = -15;
-                        JumpDirectionLeft = npc.Center.X > targetPosition.X;
-                        Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
-                        if (JumpDirectionLeft)
-                        {
-                            npc.velocity.X -= 10;
-                        }
-                        else
-                        {
-                            npc.velocity.X += 10;
-                        }
+                        PhaseTimeLeft = 90;
+                        Terraria.Audio.SoundEngine.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
+                        jumpTarget = targetPosition + new Vector2(0, -300);
                     }
                     if (PlannedAIPhase == 4)
                     {
                         frame = 6;
+                        PhaseTimeLeft = 3;
+                        if (npc.life <= npc.lifeMax * 0.66f)
+                        {
+                            PhaseTimeLeft = 4;
+                        }
+                        if (npc.life <= npc.lifeMax * 0.33f)
+                        {
+                            PhaseTimeLeft = 5;
+                        }
+                    }
+                    if (PlannedAIPhase == 5)
+                    {
+                        BubbleWait = 10;
+                        BubblesToFire = 3;
+                        bubbleAttackCooldown = 500;
                     }
                 }
             }
             if (AIPhase == 1) //walking
             {
-                if (Main.expertMode && npc.life <= npc.lifeMax * 0.65)
-                {
-                    BubbleWait--;
-                    if (BubbleWait <= 0)
-                    {
-                        SpawnBubble(10, 10);
-                        BubbleWait = 180 + npc.life / 125;
-                    }
-                }
-                if (Main.expertMode)
-                {
-                    if (npc.life <= npc.lifeMax / 2)
-                    {
-                        ExpertUntilWalkFire--;
-                        if (ExpertUntilWalkFire <= 0)
-                        {
-                            Main.PlaySound(SoundID.Item20, npc.Center);
-                            ExpertUntilWalkFire = Main.rand.Next(20, 60);
-                            Projectile.NewProjectile(new Vector2(npc.position.X + Main.rand.Next(0, npc.width), npc.position.Y), new Vector2(0, -Main.rand.Next(7, 13)), mod.ProjectileType("TideFire"), 50 / 2, 15);
-                            //if (npc.life <= npc.lifeMax / 3 && Main.rand.Next(101) <= 5 || Main.rand.Next(101) <= 10 && npc.life <= npc.lifeMax / 6)
-                            //{
-                            //    Projectile.NewProjectile(new Vector2(npc.Center.X, npc.position.Y), new Vector2(10, 0), mod.ProjectileType("SlamOut"), 17, 15);
-                            //    Projectile.NewProjectile(new Vector2(npc.Center.X, npc.position.Y), new Vector2(-10, 0), mod.ProjectileType("SlamOut"), 17, 15);
-                            //    Main.PlaySound(15, (int)npc.position.X, (int)npc.position.Y, 0);
-                            //}
-                        }
-                    }
-                }
+                //BubbleWait--;
+                //if (BubbleWait <= 0)
+                //{
+                //    BubbleWait = 120;
+                //    float speed = 7f;
+                //    Vector2 velocity = npc.DirectionTo(targetPosition) * speed;
+                //    Projectile.NewProjectile(npc.Center, velocity, ModContent.ProjectileType<Projectiles.MoonlightOrb>(), 50 / 4, 0);
+                //}
                 if (targetPosition.Y >= npc.position.Y + 150)
                 {
                     npc.velocity.Y += 0.2f;
                     npc.position.Y += 0.1f;
                 }
-                float WalkSpeed = 0.25f;
-                WalkingAnimation(6);
+                float WalkSpeed = 0.35f;
+                WalkingAnimation(4);
                 if (npc.Center.X <= targetPosition.X)
                 {
                     npc.velocity.X += WalkSpeed;
@@ -373,27 +401,13 @@ namespace TerrorbornMod.NPCs.Bosses
                 PhaseTimeLeft--;
                 if (PhaseTimeLeft <= 0)
                 {
+                    DecideNextAIPhase();
                     AIPhase = 0;
                     waitingTime = 40;
-
                     FrameWait = 6;
-                    if (Main.rand.Next(101) <= 60)
-                    {
-                        PlannedAIPhase = 2;
-                    }
-                    else
-                    {
-                        PlannedAIPhase = 5;
-                    }
-
-                    if (requiredJumpWait <= 0)
-                    {
-                        PlannedAIPhase = 3;
-                        PhaseTimeLeft = 60;
-                    }
                 }
             }
-            if (AIPhase == 2) //Slam Towards player A.K.A Crabbo stabbo
+            if (AIPhase == 2) //Slam Towards player
             {
                 FrameWait--;
                 if (FrameWait <= 0)
@@ -402,11 +416,7 @@ namespace TerrorbornMod.NPCs.Bosses
                     FrameWait = 6;
                     if (frame == 14)
                     {
-                        Main.PlaySound(SoundID.Item14, npc.Center);
-                        if (Main.rand.Next(101) <= 15)
-                        {
-                            Main.PlaySound(SoundID.Roar, npc.Center);
-                        }
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, npc.Center);
                         if (npc.Center.X <= targetPosition.X)
                         {
                             Projectile.NewProjectile(new Vector2(npc.Center.X, npc.position.Y), new Vector2(12.5f, 0), mod.ProjectileType("SlamOut"), 50 / 4, 15);
@@ -419,118 +429,85 @@ namespace TerrorbornMod.NPCs.Bosses
                     }
                     if (frame >= 16)
                     {
+                        DecideNextAIPhase();
                         AIPhase = 0;
-                        waitingTime = Main.rand.Next(25, 65);
-                        if (Main.rand.Next(101) <= 33)
-                        {
-                            PlannedAIPhase = 1;
-                            PhaseTimeLeft = 240;
-                        }
-                        else
-                        {
-                            if ((Main.rand.Next(101) <= 50 && JumpCooldown > 0) || requiredJumpWait <= 0)
-                            {
-                                PlannedAIPhase = 3;
-                                PhaseTimeLeft = 60;
-                            }
-                            else
-                            {
-                                PlannedAIPhase = 4;
-                                PhaseTimeLeft = 0;
-                            }
-                        }
-
-                        if (requiredJumpWait <= 0)
-                        {
-                            PlannedAIPhase = 3;
-                            PhaseTimeLeft = 60;
-                        }
+                        waitingTime = 40;
                     }
                 }
             }
             if (AIPhase == 3) //Jump
             {
-                if (npc.velocity.Y != 0)
+                if (PhaseTimeLeft > 0)
                 {
-                    JumpCooldown = 240;
-                    float JumpSpeed = 0.5f;
                     frame = 7;
-                    if (JumpDirectionLeft)
+                    PhaseTimeLeft--;
+                    npc.noTileCollide = true;
+                    npc.velocity = npc.DirectionTo(jumpTarget) * npc.Distance(jumpTarget) / 10;
+
+                    if (PhaseTimeLeft <= 0)
                     {
-                        npc.velocity.X -= JumpSpeed;
-                    }
-                    else
-                    {
-                        npc.velocity.X += JumpSpeed;
+                        npc.velocity.Y += 15;
                     }
                 }
                 else
                 {
-                    PhaseTimeLeft--;
-                    if (PhaseTimeLeft == 58)
+                    frame = 7;
+                    npc.noTileCollide = targetPosition.Y > npc.position.Y + npc.height;
+                    if (npc.velocity.Y == 0)
                     {
-                        Main.PlaySound(SoundID.Item14, npc.Center);
+                        frame = 0;
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, npc.Center);
                         npc.velocity.X = 0;
 
-                        int geyserCount = 30;
-                        float geyserSpace = 300;
+                        int geyserCount = 45;
+                        float geyserSpace = 200;
 
                         for (int i = -geyserCount / 2; i < geyserCount / 2; i++)
                         {
                             Vector2 position = new Vector2(npc.Center.X - i * geyserSpace, npc.position.Y);
                             int proj = Projectile.NewProjectile(position, Vector2.Zero, ModContent.ProjectileType<JumpGeyserTelegraph>(), 17, 0);
-                            Main.projectile[proj].ai[0] = 75 - ((npc.lifeMax - npc.life) / npc.lifeMax) * 45;
+                            Main.projectile[proj].ai[0] = 50 - ((npc.lifeMax - npc.life) / npc.lifeMax) * 45;
                         }
-                        //Projectile.NewProjectile(new Vector2(npc.Center.X, npc.position.Y), new Vector2(10, 0), mod.ProjectileType("SlamOut"), 17, 15);
-                        //Projectile.NewProjectile(new Vector2(npc.Center.X, npc.position.Y), new Vector2(-10, 0), mod.ProjectileType("SlamOut"), 17, 15);
-                    }
-                    if (PhaseTimeLeft <= 0)
-                    {
+
+                        DecideNextAIPhase();
                         AIPhase = 0;
-                        waitingTime = Main.rand.Next(40, 70);
-                        PlannedAIPhase = 4;
+                        waitingTime = 90;
+                        JumpCooldown = 120;
                         PhaseTimeLeft = 240;
                     }
                     frame = 0;
                 }
             }
-            if (AIPhase == 4) //Slammy boi
+            if (AIPhase == 4) //Predictive Geysers
             {
                 FrameWait--;
                 if (FrameWait <= 0)
                 {
                     frame++;
                     FrameWait = 6;
+                    if (npc.life <= npc.lifeMax * 0.66f)
+                    {
+                        FrameWait = 4;
+                    }
                     if (frame == 10)
                     {
-                        Main.PlaySound(SoundID.Item14, npc.Center);
-                        if (Main.rand.Next(101) <= 15)
-                        {
-                            Main.PlaySound(SoundID.Roar, npc.Center);
-                        }
-                        int SlamSpeed = Main.rand.Next(5, 8);
-                        Projectile.NewProjectile(new Vector2(npc.Center.X + npc.width / 4, npc.position.Y), new Vector2(SlamSpeed, 0), mod.ProjectileType("SlamOut"), 60 / 4, 15);
-                        Projectile.NewProjectile(new Vector2(npc.position.X + npc.width / 4, npc.position.Y), new Vector2(-SlamSpeed, 0), mod.ProjectileType("SlamOut"), 60 / 4, 15);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, npc.Center);
+                        Vector2 position = new Vector2(target.Center.X + target.velocity.X * 60, target.Center.Y);
+                        int proj = Projectile.NewProjectile(position, Vector2.Zero, ModContent.ProjectileType<JumpGeyserTelegraph>(), 17, 0);
+                        Main.projectile[proj].ai[0] = 60;
                     }
                     if (frame >= 11)
                     {
-                        AIPhase = 0;
-                        waitingTime = Main.rand.Next(25, 65);
-                        if ((Main.rand.Next(101) >= 33 && requiredJumpWait > 0) || JumpCooldown > 0)
+                        PhaseTimeLeft--;
+                        if (PhaseTimeLeft <= 0)
                         {
-                            PlannedAIPhase = 1;
-                            PhaseTimeLeft = 240;
+                            DecideNextAIPhase();
+                            AIPhase = 0;
+                            waitingTime = 80;
                         }
                         else
                         {
-                            PlannedAIPhase = 3;
-                            PhaseTimeLeft = 60;
-                        }
-
-                        if (requiredJumpWait <= 0)
-                        {
-                            PlannedAIPhase = 3;
-                            PhaseTimeLeft = 60;
+                            frame = 6;
                         }
                     }
                 }
@@ -552,25 +529,9 @@ namespace TerrorbornMod.NPCs.Bosses
                     BubblesToFire--;
                     if (BubblesToFire <= 0)
                     {
-                        BubblesToFire = 4;
+                        DecideNextAIPhase();
                         AIPhase = 0;
-                        waitingTime = Main.rand.Next(30, 90);
-                        if ((Main.rand.Next(101) <= 50 && JumpCooldown > 0) || requiredJumpWait <= 0)
-                        {
-                            PlannedAIPhase = 3;
-                            PhaseTimeLeft = 60;
-                        }
-                        else
-                        {
-                            PlannedAIPhase = 4;
-                            PhaseTimeLeft = 0;
-                        }
-
-                        if (requiredJumpWait <= 0)
-                        {
-                            PlannedAIPhase = 3;
-                            PhaseTimeLeft = 60;
-                        }
+                        waitingTime = 40;
                     }
                 }
             }
@@ -601,7 +562,7 @@ namespace TerrorbornMod.NPCs.Bosses
                 if (FireWait <= 0)
                 {
                     FireWait = Math.Abs(20 / projectile.velocity.X);
-                    //Main.PlaySound(SoundID.Item20, projectile.Center);
+                    //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, projectile.Center);
                     Projectile.NewProjectile(new Vector2(projectile.position.X, projectile.position.Y + 80), new Vector2(0, -10), mod.ProjectileType("TideFire"), projectile.damage, projectile.knockBack);
                 }
             }
@@ -632,7 +593,7 @@ namespace TerrorbornMod.NPCs.Bosses
                 if (FireWait <= 0)
                 {
                     FireWait = Math.Abs(20 / projectile.velocity.X);
-                    //Main.PlaySound(SoundID.Item20, projectile.Center);
+                    //Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, projectile.Center);
                     Projectile.NewProjectile(new Vector2(projectile.position.X, projectile.position.Y + 80), new Vector2(0, -15), mod.ProjectileType("TideFire"), projectile.damage, projectile.knockBack);
                 }
             }
@@ -762,7 +723,7 @@ namespace TerrorbornMod.NPCs.Bosses
             }
             public override void Kill(int timeLeft)
             {
-                Main.PlaySound(SoundID.Item54, projectile.position);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item54, projectile.position);
             }
         }
     }
@@ -974,7 +935,7 @@ namespace TerrorbornMod.NPCs.Bosses
                     {
                         projectile.active = false;
                     }
-                    Main.PlaySound(SoundID.Item34, projectile.position);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34, projectile.position);
                     Projectile.NewProjectile(new Vector2(projectile.position.X, projectile.position.Y - 20), new Vector2(0, -20), mod.ProjectileType("TideFire"), 18, projectile.knockBack);
                     projectile.velocity.X = 0;
                 }
@@ -1059,7 +1020,7 @@ namespace TerrorbornMod.NPCs.Bosses
             FireWait--;
             if (FireWait == 1)
             {
-                Main.PlaySound(SoundID.Item88, Main.player[Main.myPlayer].Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item88, Main.player[Main.myPlayer].Center);
                 int proj = Projectile.NewProjectile(new Vector2(projectile.position.X, projectile.position.Y - 20), new Vector2(0, 10), mod.ProjectileType("TideFire"), 18, projectile.knockBack);
                 Main.projectile[proj].tileCollide = true;
                 Main.projectile[proj].ignoreWater = true;

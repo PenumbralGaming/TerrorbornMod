@@ -2,6 +2,7 @@
 using System;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Microsoft.Xna.Framework;
 
 namespace TerrorbornMod.Items.Equipable.Armor

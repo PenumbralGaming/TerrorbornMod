@@ -9,8 +9,9 @@ using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.Localization;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Terraria.UI;
 using Terraria.GameContent.UI.Elements;
 using TerrorbornMod.Abilities;
@@ -232,7 +233,7 @@ namespace TerrorbornMod.UI.TerrorMeter
                 {
                     page = maxPage;
                 }
-                Main.PlaySound(SoundID.MenuTick);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
             }
 
             if (new Rectangle((int)(screenCenter.X - 185), (int)(screenCenter.Y - 125), 110, 20).Intersects(mouseRectangle) && TerrorbornUtils.mouseJustPressed) //When next page is clicked
@@ -242,7 +243,7 @@ namespace TerrorbornMod.UI.TerrorMeter
                 {
                     page = 0;
                 }
-                Main.PlaySound(SoundID.MenuTick);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
             }
 
             //---------PRIMARY BUTTONS---------
@@ -256,7 +257,7 @@ namespace TerrorbornMod.UI.TerrorMeter
             if (new Rectangle((int)(screenCenter.X - 318), (int)(screenCenter.Y - 330), 65, 20).Intersects(mouseRectangle) && TerrorbornUtils.mouseJustPressed)
             {
                 modPlayer.primaryAbility = ability1;
-                Main.PlaySound(SoundID.Grab);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
             }
 
             Primary2.Left.Set(screenCenter.X - 318, 0f);
@@ -269,7 +270,7 @@ namespace TerrorbornMod.UI.TerrorMeter
             if (new Rectangle((int)(screenCenter.X - 318), (int)(screenCenter.Y - 245), 65, 20).Intersects(mouseRectangle) && TerrorbornUtils.mouseJustPressed)
             {
                 modPlayer.primaryAbility = ability2;
-                Main.PlaySound(SoundID.Grab);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
             }
 
             Primary3.Left.Set(screenCenter.X - 318, 0f);
@@ -282,7 +283,7 @@ namespace TerrorbornMod.UI.TerrorMeter
             if (new Rectangle((int)(screenCenter.X - 318), (int)(screenCenter.Y - 160f), 65, 20).Intersects(mouseRectangle) && TerrorbornUtils.mouseJustPressed)
             {
                 modPlayer.primaryAbility = ability3;
-                Main.PlaySound(SoundID.Grab);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
             }
 
             //---------SECONDARY BUTTONS---------
@@ -296,7 +297,7 @@ namespace TerrorbornMod.UI.TerrorMeter
             if (new Rectangle((int)(screenCenter.X - 240), (int)(screenCenter.Y - 330), 81, 20).Intersects(mouseRectangle) && TerrorbornUtils.mouseJustPressed)
             {
                 modPlayer.secondaryAbility = ability1;
-                Main.PlaySound(SoundID.Grab);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
             }
 
             Secondary2.Left.Set(screenCenter.X - 240, 0f);
@@ -309,7 +310,7 @@ namespace TerrorbornMod.UI.TerrorMeter
             if (new Rectangle((int)(screenCenter.X - 240), (int)(screenCenter.Y - 245), 81, 20).Intersects(mouseRectangle) && TerrorbornUtils.mouseJustPressed)
             {
                 modPlayer.secondaryAbility = ability2;
-                Main.PlaySound(SoundID.Grab);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
             }
 
             Secondary3.Left.Set(screenCenter.X - 240, 0f);
@@ -322,7 +323,7 @@ namespace TerrorbornMod.UI.TerrorMeter
             if (new Rectangle((int)(screenCenter.X - 240), (int)(screenCenter.Y - 160f), 81, 20).Intersects(mouseRectangle) && TerrorbornUtils.mouseJustPressed)
             {
                 modPlayer.secondaryAbility = ability3;
-                Main.PlaySound(SoundID.Grab);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Grab);
             }
 
             //---------EXPLANATION BUTTONS---------
@@ -342,7 +343,7 @@ namespace TerrorbornMod.UI.TerrorMeter
             {
                 showingAbilityDescription = true;
                 abilityDescription = ability1.Description();
-                Main.PlaySound(SoundID.MenuTick);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
             }
 
             Explanation2.Left.Set(ExplanationLeft, 0f);
@@ -356,7 +357,7 @@ namespace TerrorbornMod.UI.TerrorMeter
             {
                 showingAbilityDescription = true;
                 abilityDescription = ability2.Description();
-                Main.PlaySound(SoundID.MenuTick);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
             }
 
             Explanation3.Left.Set(ExplanationLeft, 0f);
@@ -370,7 +371,7 @@ namespace TerrorbornMod.UI.TerrorMeter
             {
                 showingAbilityDescription = true;
                 abilityDescription = ability3.Description();
-                Main.PlaySound(SoundID.MenuTick);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.MenuTick);
             }
 
             //---------EXPLANATION PANEL---------

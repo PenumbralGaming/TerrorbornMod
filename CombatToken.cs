@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.GameContent.UI;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod
 {

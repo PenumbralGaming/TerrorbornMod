@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Weapons.Magic
 {
@@ -104,7 +105,7 @@ namespace TerrorbornMod.Items.Weapons.Magic
             if (intersects)
             {
                 projectile.timeLeft = 0;
-                Main.PlaySound(SoundID.Item110, projectile.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item110, projectile.Center);
                 for (int i = 0; i < Main.rand.Next(3, 5); i++)
                 {
                     float speed = 1f;

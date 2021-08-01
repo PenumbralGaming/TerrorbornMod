@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Terraria.ID;
 using System;
 using Microsoft.Xna.Framework;
@@ -60,7 +61,7 @@ namespace TerrorbornMod.Items.Equipable.Accessories
                 {
                     modPlayer.TerrorPercent += 1.5f;
                     Cooldown = 60 / 6;
-                    Main.PlaySound(SoundID.MaxMana, player.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.MaxMana, player.Center);
                     DustCircle(player.Center, 180, range, 63, -5, 3f);
                 }
             }

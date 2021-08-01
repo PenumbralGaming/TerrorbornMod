@@ -5,6 +5,7 @@ using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Terraria.GameContent.Events;
 using Terraria.Utilities;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Linq;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.Localization;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 using Terraria.UI;
 
 namespace TerrorbornMod.Items.Weapons.Summons.Other
@@ -75,8 +76,8 @@ namespace TerrorbornMod.Items.Weapons.Summons.Other
         }
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.NPCDeath46, projectile.Center);
-            Main.PlaySound(SoundID.Item14, projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath46, projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, projectile.Center);
             for (int i = 0; i < Main.rand.Next(3, 6); i++)
             {
                 float Speed = Main.rand.Next(7, 10);

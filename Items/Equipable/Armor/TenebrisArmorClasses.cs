@@ -3,6 +3,7 @@ using Terraria.ID;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Equipable.Armor
 {
@@ -51,9 +52,9 @@ namespace TerrorbornMod.Items.Equipable.Armor
                 "\nYour maximum HP is decreased by 80.";
             player.statLifeMax2 -= 80;
 
-            if (TerrorbornMod.ArmorAbility.JustPressed && !player.HasBuff(ModContent.BuffType<TenebralCooldown>()))
+            if (TerrorbornModContent.ArmorAbility.JustPressed && !player.HasBuff(ModContent.BuffType<TenebralCooldown>()))
             {
-                Main.PlaySound(SoundID.Item72, player.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item72, player.Center);
                 player.AddBuff(ModContent.BuffType<TenebralCooldown>(), 180);
                 int Speed = 14;
                 Vector2 mousePosition = new Vector2(Main.mouseX, Main.mouseY) + Main.screenPosition;

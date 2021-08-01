@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.PrototypeI
 {
@@ -85,7 +86,7 @@ namespace TerrorbornMod.Items.PrototypeI
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Main.PlaySound(0, projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(0, projectile.position);
             TimeUntilReturn = 0;
             speed = 0;
             return false;

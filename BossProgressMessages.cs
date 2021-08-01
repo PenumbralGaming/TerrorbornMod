@@ -5,7 +5,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
+using static Terraria.ModLoader.ModContent;
+using Terraria.WorldBuilding;
 using Microsoft.Xna.Framework;
 using Terraria.GameContent.Generation;
 using Terraria.ModLoader.IO;
@@ -136,6 +137,7 @@ namespace TerrorbornMod
             {
                 HardmodeMessagesSent = true;
                 Main.NewText("An incendiary curse spreads throughout the caverns", 236, 165, 133);
+                Main.NewText("The souls released from the wall begin to condense in the sky...", Color.FromNonPremultiplied(40 * 2, 55 * 2, 70 * 2, 255));
                 Main.NewText("The Skeleton Sheriff has new items in his shop!", Color.Yellow);
             }
             if (NPC.downedPlantBoss && !PostPlanteraMessagesSent)

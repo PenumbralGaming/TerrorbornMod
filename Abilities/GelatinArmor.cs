@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using TerrorbornMod;
 using Terraria.ID;
 
@@ -57,7 +58,7 @@ namespace TerrorbornMod.Abilities
         {
             TerrorbornPlayer modPlayer = TerrorbornPlayer.modPlayer(player);
             modPlayer.GelatinArmorTime = 60 * 25;
-            Main.PlaySound(SoundID.Item117);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item117);
         }
     }
 

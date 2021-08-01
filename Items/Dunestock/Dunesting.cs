@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Dunestock
 {
@@ -48,13 +49,13 @@ namespace TerrorbornMod.Items.Dunestock
                 item.reuseDelay = 0;
                 Vector2 spread1 = new Vector2(speedX, speedY).RotatedByRandom(MathHelper.ToRadians(15));
                 Vector2 spread2 = new Vector2(speedX, speedY).RotatedByRandom(MathHelper.ToRadians(15));
-                int realdamage = (int)(damage * 0.6f);
+                int realdamage = (int)(damage * 0.5f);
                 Projectile.NewProjectile(position, spread1, ModContent.ProjectileType<TumblerNeedleFriendly>(), realdamage, knockBack, item.owner);
                 Projectile.NewProjectile(position, spread2, ModContent.ProjectileType<TumblerNeedleFriendly>(), realdamage, knockBack, item.owner);
             }
             else
             {
-                item.reuseDelay = 15;
+                item.reuseDelay = 25;
                 float speed = item.shootSpeed;
 
                 Vector2 velocity = (new Vector2(Main.mouseX, Main.mouseY) + Main.screenPosition - position).ToRotation().ToRotationVector2() * speed * 1.5f;
@@ -94,12 +95,13 @@ namespace TerrorbornMod.Items.Dunestock
             projectile.height = 10;
             projectile.hostile = false;
             projectile.friendly = true;
+            projectile.ranged = true;
             projectile.ignoreWater = false;
             projectile.tileCollide = true;
             projectile.penetrate = 5;
             projectile.timeLeft = 12000;
             projectile.usesLocalNPCImmunity = true;
-            projectile.localNPCHitCooldown = 15;
+            projectile.localNPCHitCooldown = 10;
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {

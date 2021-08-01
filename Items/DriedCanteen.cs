@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items
 {
@@ -29,7 +30,7 @@ namespace TerrorbornMod.Items
         public override bool UseItem(Player player)
         {
             NPC.SpawnOnPlayer(player.whoAmI, mod.NPCType("Dunestock"));
-            Main.PlaySound(SoundID.Roar, player.position, 0);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, player.position, 0);
             return true;
         }
 

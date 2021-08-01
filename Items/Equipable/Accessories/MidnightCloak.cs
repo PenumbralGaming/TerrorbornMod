@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Terraria.ID;
 using System;
 using Microsoft.Xna.Framework;
@@ -42,7 +43,8 @@ namespace TerrorbornMod.Items.Equipable.Accessories
         bool heldRight = false;
         bool heldLeft = false;
 
-        int cancleCounter = 0;
+        int cancleCounterLeft = 0;
+        int cancleCounterRight = 0;
         int rightTaps = 0;
         int leftTaps = 0;
 
@@ -65,7 +67,7 @@ namespace TerrorbornMod.Items.Equipable.Accessories
         public void Dash(int direction, Player player)
         {
             player.velocity.X = 14.5f * direction;
-            Main.PlaySound(SoundID.DD2_FlameburstTowerShot, player.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, player.Center);
 
             Rectangle closeRectangle = player.getRect();
             int extraWidth = 320;
@@ -121,14 +123,14 @@ namespace TerrorbornMod.Items.Equipable.Accessories
                 Main.dust[dust].noGravity = true;
             }
 
-            if (player.controlRight)
-            {
-                heldRight = true;
-            }
-            if (!player.controlRight & heldRight & dashDelay <= 0)
+            if (!player.controlRight)
             {
                 heldRight = false;
-                cancleCounter = 15;
+            }
+            if (player.controlRight & !heldRight & dashDelay <= 0)
+            {
+                heldRight = true;
+                cancleCounterRight = 15;
                 rightTaps++;
                 if (rightTaps >= 2)
                 {
@@ -138,14 +140,14 @@ namespace TerrorbornMod.Items.Equipable.Accessories
                 }
             }
 
-            if (player.controlLeft)
-            {
-                heldLeft = true;
-            }
-            if (!player.controlLeft & heldLeft & dashDelay <= 0)
+            if (!player.controlLeft)
             {
                 heldLeft = false;
-                cancleCounter = 15;
+            }
+            if (player.controlLeft & !heldLeft & dashDelay <= 0)
+            {
+                heldLeft = true;
+                cancleCounterLeft = 15;
                 leftTaps++;
                 if (leftTaps >= 2)
                 {
@@ -155,13 +157,21 @@ namespace TerrorbornMod.Items.Equipable.Accessories
                 }
             }
 
-            if (cancleCounter > 0)
+            if (cancleCounterRight > 0)
             {
-                cancleCounter--;
+                cancleCounterRight--;
             }
-            if (cancleCounter <= 0)
+            if (cancleCounterRight <= 0)
             {
                 rightTaps = 0;
+            }
+
+            if (cancleCounterLeft > 0)
+            {
+                cancleCounterLeft--;
+            }
+            if (cancleCounterLeft <= 0)
+            {
                 leftTaps = 0;
             }
         }

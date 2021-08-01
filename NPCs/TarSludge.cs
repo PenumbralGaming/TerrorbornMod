@@ -4,6 +4,7 @@ using Terraria.ID;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace TerrorbornMod.NPCs
@@ -26,7 +27,7 @@ namespace TerrorbornMod.NPCs
             npc.HitSound = SoundID.NPCHit8;
             npc.DeathSound = SoundID.NPCDeath13;
             npc.value = 250;
-            npc.knockBackResist = 0f;
+            npc.knockBackResist = 0.1f;
             npc.aiStyle = 1;
             
             npc.lavaImmune = true;
@@ -57,7 +58,7 @@ namespace TerrorbornMod.NPCs
                 if (JavelinCounter <= 0)
                 {
                     JavelinCounter = Main.rand.Next(60, 80);
-                    Main.PlaySound(SoundID.Item42, npc.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item42, npc.Center);
                     Vector2 Rotation = npc.DirectionTo(player.Center);
                     float Speed = 10;
                     if (npc.life <= npc.lifeMax * 0.30f)

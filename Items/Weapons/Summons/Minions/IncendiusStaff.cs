@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace TerrorbornMod.Items.Weapons.Summons.Minions
@@ -35,6 +36,8 @@ namespace TerrorbornMod.Items.Weapons.Summons.Minions
         }
         public override void SetDefaults()
         {
+            item.width = 64;
+            item.height = 60;
             item.mana = 10;
             item.summon = true;
             item.damage = 19;

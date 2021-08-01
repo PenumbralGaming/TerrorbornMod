@@ -1,6 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Microsoft.Xna.Framework;
 
 namespace TerrorbornMod.Items.Equipable.Accessories
@@ -114,7 +115,7 @@ namespace TerrorbornMod.Items.Equipable.Accessories
                         player.AddBuff(BuffID.Panic, 60 * 5);
                         CombatText.NewText(projectile.getRect(), Color.LightYellow, "Projectile blocked", true, true);
                         cooldown = 60 * 5;
-                        Main.PlaySound(SoundID.DD2_SkeletonHurt);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_SkeletonHurt);
                     }
                 }
             }

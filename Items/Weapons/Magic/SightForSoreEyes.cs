@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 
 namespace TerrorbornMod.Items.Weapons.Magic
 {
@@ -62,7 +63,7 @@ namespace TerrorbornMod.Items.Weapons.Magic
         }
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item54, projectile.position);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item54, projectile.position);
         }
     }
 }

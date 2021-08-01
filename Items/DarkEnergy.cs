@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.ModContent;
 using Terraria.Utilities;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,8 @@ namespace TerrorbornMod.Items
     {
         public override void SetDefaults()
         {
-
+            item.width = 40;
+            item.height = 34;
         }
 
         public override void SetStaticDefaults()
@@ -28,7 +30,7 @@ namespace TerrorbornMod.Items
         {
             TerrorbornPlayer modPlayer = TerrorbornPlayer.modPlayer(player);
             modPlayer.TerrorPercent += 10;
-            Main.PlaySound(SoundID.Item4, player.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item4, player.Center);
             if (modPlayer.TerrorPercent > 100)
             {
                 modPlayer.TerrorPercent = 100;
